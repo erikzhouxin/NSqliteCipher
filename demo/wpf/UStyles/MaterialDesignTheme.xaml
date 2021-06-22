@@ -1,0 +1,36 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.Indigo.xaml" />
+        <!--<ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Dark.xaml" />-->
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+    <!-- 全局字体大小 -->
+    <Style TargetType="{x:Type Window}">
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+    <Style TargetType="{x:Type TextElement}">
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+    <Style TargetType="{x:Type TextBlock}">
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+    <!--PRIMARY-->
+    <SolidColorBrush x:Key="PrimaryHueLightBrush" Color="#FF68D1FF"/>
+    <SolidColorBrush x:Key="PrimaryHueLightForegroundBrush" Color="#DD000000"/>
+    <SolidColorBrush x:Key="PrimaryHueMidBrush" Color="#FF09A0F4"/>
+    <SolidColorBrush x:Key="PrimaryHueMidForegroundBrush" Color="#DDFFFFFF"/>
+    <SolidColorBrush x:Key="PrimaryHueDarkBrush" Color="#FF0072C1"/>
+    <SolidColorBrush x:Key="PrimaryHueDarkForegroundBrush" Color="#DDFFFFFF"/>
+    <!--ACCENT-->
+    <SolidColorBrush x:Key="SecondaryHueLightBrush" Color="#FF6EC6FF"/>
+    <SolidColorBrush x:Key="SecondaryHueLightForegroundBrush" Color="#FF000000"/>
+    <SolidColorBrush x:Key="SecondaryHueMidBrush" Color="#FF2196F3"/>
+    <SolidColorBrush x:Key="SecondaryHueMidForegroundBrush" Color="#DD000000"/>
+    <SolidColorBrush x:Key="SecondaryHueDarkBrush" Color="#FF0069C0"/>
+    <SolidColorBrush x:Key="SecondaryHueDarkForegroundBrush" Color="#FF000000"/>
+</ResourceDictionary>

@@ -1,0 +1,97 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFrameworks>net5.0-windows;netcoreapp3.1;net45;</TargetFrameworks>
+		<AssemblyName>TestWPFUI.SQLiteCipher</AssemblyName>
+		<RootNamespace>TestWPFUI.SQLiteCipher</RootNamespace>
+		<AssemblyTitle>TestWPFUI.SQLiteCipher</AssemblyTitle>
+		<SignAssembly>true</SignAssembly>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<UseWPF>true</UseWPF>
+		<UseWindowsForms>true</UseWindowsForms>
+		<PackageTags>TestWPF.SQLiteCipher</PackageTags>
+		<Authors>ErikZhouXin</Authors>
+		<Copyright>Copyright © 2019 版权所有</Copyright>
+		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
+		<ApplicationIcon>Resources\sqliteicon.ico</ApplicationIcon>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
+		<DefineConstants>TRACE;DEBUG;NETFrame;NET45</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNet45.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNetCore.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0-windows'">
+		<DefineConstants>TRACE;DEBUG;NET50;WINDOWS</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipher.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
+		<DefineConstants>TRACE;NETFrame;NET45</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNet45.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
+		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNetCore.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0-windows'">
+		<DefineConstants>TRACE;NET50;WINDOWS</DefineConstants>
+		<DocumentationFile>bin\TestWPFUI.SQLiteCipher.xml</DocumentationFile>
+		<OutputPath>bin</OutputPath>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net45'">
+		<PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
+		<PackageReference Include="LiveCharts" Version="0.9.7" />
+		<PackageReference Include="LiveCharts.Wpf" Version="0.9.7" />
+		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="NPOI" Version="2.5.1" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
+		<Reference Include="ReachFramework" />
+		<Reference Include="PresentationCore" />
+		<Reference Include="PresentationFramework" />
+		<PackageReference Include="SQLitePCLRaw.lib.sqlcipher.windows" Version="1.1.14" />
+		<Reference Include="System.Printing" />
+		<PackageReference Include="System.Runtime" Version="4.3.1" />
+		<Reference Include="WindowsBase" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
+		<PackageReference Include="LiveCharts.NetCore" Version="0.9.7" />
+		<PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
+		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="NPOI" Version="2.5.1" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlcipher" Version="2.0.4" />
+		<PackageReference Include="System.Runtime" Version="4.3.1" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
+		<PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
+		<PackageReference Include="LiveCharts.NetCore" Version="0.9.7" />
+		<PackageReference Include="LiveCharts.Wpf.NetCore3" Version="0.9.7" />
+		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
+		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
+		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="NPOI" Version="2.5.1" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
+		<PackageReference Include="SQLitePCLRaw.lib.e_sqlcipher" Version="2.0.4" />
+		<PackageReference Include="System.Runtime" Version="4.3.1" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\src\System.Data.SQLiteCipher.csproj" />
+	</ItemGroup>
+</Project>
