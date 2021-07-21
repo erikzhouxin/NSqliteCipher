@@ -13,6 +13,9 @@
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>1.0.1</Version>
+		<EmbedAllSources>true</EmbedAllSources>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net4'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>

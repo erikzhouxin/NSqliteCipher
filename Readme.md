@@ -7,3 +7,5 @@
 ```
 Install-Package NSystem.Data.SQLiteCipher
 ```
+
+如侵犯原作者权益，望告知，发现问题立即整改。
