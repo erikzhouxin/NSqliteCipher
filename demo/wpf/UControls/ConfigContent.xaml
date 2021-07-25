@@ -14,6 +14,7 @@
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
             <RowDefinition Height="50"/>
+            <RowDefinition Height="50"/>
             <RowDefinition Height="20"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
@@ -33,7 +34,14 @@
             <TextBlock Text="密          码：" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center"/>
             <TextBox Text="{Binding Password}" VerticalAlignment="Center" />
         </DockPanel>
-        <StackPanel Grid.Row="4" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
+        <DockPanel Grid.Row="4" Grid.Column="1">
+            <TextBlock Text="版          本：" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+            <ComboBox VerticalAlignment="Center" Text="{Binding Version}">
+                <ComboBoxItem>3</ComboBoxItem>
+                <ComboBoxItem>4</ComboBoxItem>
+            </ComboBox>
+        </DockPanel>
+        <StackPanel Grid.Row="5" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center">
             <Button Content="保存" Margin="-50,0,0,0" VerticalAlignment="Center" Click="BtnSave_Click"/>
             <Button Content="取消" Margin="100,0,0,0" VerticalAlignment="Center" Click="BtnCancel_Click"/>
         </StackPanel>

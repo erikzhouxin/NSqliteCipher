@@ -1,27 +1,22 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 namespace System.Data.SQLiteCipher
 {
     /// <summary>
-    ///     Represents the caching modes that can be used when creating a new <see cref="SqliteConnection" />.
+    /// 创建新缓存时可使用的缓存模式
     /// </summary>
+    /// <see cref="SqliteConnection" />
     /// <seealso href="http://sqlite.org/sharedcache.html">SQLite Shared-Cache Mode</seealso>
     public enum SqliteCacheMode
     {
         /// <summary>
-        ///     Default mode.
+        /// 默认模式
         /// </summary>
         Default,
-
         /// <summary>
-        ///     Private-cache mode. Each connection uses a private cache.
+        /// 私有模式,每个连接有一个私有缓存
         /// </summary>
         Private,
-
         /// <summary>
-        ///     Shared-cache mode. Connections share a cache. This mode can change the behavior of transaction and table
-        ///     locking.
+        /// 共享模式,连接共享缓存,这种模式可以改变事务和表锁定的行为
         /// </summary>
         Shared
     }

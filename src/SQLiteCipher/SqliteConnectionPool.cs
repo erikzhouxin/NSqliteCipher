@@ -49,7 +49,7 @@ namespace System.Data.SQLiteCipher
             SqliteConnectionPool pool;
             if (Monitor.TryEnter(_poolDic, TimeSpan.FromSeconds(LockTimeout)))
             {
-                pool = _poolDic.GetOrAdd(connString, (k) => { return new SqliteConnectionPool(connString); });
+                pool = _poolDic.GetOrAdd(connString, (k) => new SqliteConnectionPool(connString));
                 Monitor.Exit(_poolDic);
             }
             else

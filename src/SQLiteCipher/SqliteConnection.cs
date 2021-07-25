@@ -277,7 +277,7 @@ namespace System.Data.SQLiteCipher
                     // NB: SQLite doesn't support parameters in PRAGMA statements, so we escape the value using the quote function before concatenating. 减少执行不需要查询带引号的数据
                     // var quotedPassword = this.ExecuteScalar<string>("SELECT quote($password);", new SqliteParameter("$password", ConnectionOptions.Password));
                     this.ExecuteNonQuery($"PRAGMA key = '{ConnectionOptions.Password}';");
-                    this.ExecuteNonQuery("PRAGMA synchronous = NORMAL;");
+                    //this.ExecuteNonQuery("PRAGMA synchronous = NORMAL;");
                     //this.ExecuteNonQuery("PRAGMA SQLITE_THREADSAFE = 1;");
 
                     // NB: Forces decryption. Throws when the key is incorrect. 不需要
@@ -292,6 +292,19 @@ namespace System.Data.SQLiteCipher
                 if (ConnectionOptions.RecursiveTriggers)
                 {
                     this.ExecuteNonQuery("PRAGMA recursive_triggers = 1;");
+                }
+                switch (ConnectionOptions.Version)
+                {
+#if !NETFrame
+                    case SqliteVersion.V4:
+                        this.ExecuteNonQuery("PRAGMA cipher_compatibility = 4;");
+                        break;
+#endif
+                    case SqliteVersion.V3:
+                    default:
+                        this.ExecuteNonQuery("PRAGMA cipher_compatibility = 3;");
+                        this.ExecuteNonQuery("PRAGMA version = 3;");
+                        break;
                 }
 
                 foreach (var item in _collations)

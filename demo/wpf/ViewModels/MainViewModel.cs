@@ -31,8 +31,9 @@ namespace TestWPFUI.SQLiteCipher.ViewModels
         {
             Name = "程序内部数据库",
             File = DefaultFileName,
-            ConnString = $"Data Source={DefaultFileName};Password={nameof(SQLiteCipher)};",
+            ConnString = $"Data Source={DefaultFileName};Password={nameof(SQLiteCipher)};Version=3",
             IsEditable = false,
+            Version = 3,
         };
         /// <summary>
         /// 单例实例

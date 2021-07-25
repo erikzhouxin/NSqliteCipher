@@ -28,43 +28,40 @@ namespace TestWPFUI.SQLiteCipher.UControls
         /// </summary>
         public DbConnectionConfig Config { get; }
         private string _fileName;
-        private string _title;
-        private string _password;
         /// <summary>
         /// 文件名称
         /// </summary>
         public string FileName
         {
             get => _fileName;
-            set
-            {
-                _fileName = value;
-                OnPropertyChanged(nameof(FileName));
-            }
+            set => OnPropertyChanged(nameof(FileName), ref _fileName, value);
         }
+        private string _title;
         /// <summary>
         /// 标题
         /// </summary>
         public String Title
         {
             get => _title;
-            set
-            {
-                _title = value;
-                OnPropertyChanged(nameof(Title));
-            }
+            set => OnPropertyChanged(nameof(Title), ref _title, value);
         }
+        private string _password;
         /// <summary>
         /// 密码
         /// </summary>
         public String Password
         {
             get => _password;
-            set
-            {
-                _password = value;
-                OnPropertyChanged(nameof(Password));
-            }
+            set => OnPropertyChanged(nameof(Password), ref _password, value);
+        }
+        private String _version;
+        /// <summary>
+        /// 版本
+        /// </summary>
+        public String Version
+        {
+            get => _version;
+            set => OnPropertyChanged(nameof(Version), ref _version, value);
         }
         /// <summary>
         /// 是新添加
@@ -94,13 +91,14 @@ namespace TestWPFUI.SQLiteCipher.UControls
         public ConfigContent(DbConnectionConfig config, bool isNew)
         {
             InitializeComponent();
-            this.DataContext = this;
             Config = config;
             FileName = config.File;
             Title = config.Name;
             Password = config.Password;
             IsNew = isNew;
             IsEditable = config.IsEditable;
+            Version = config.Version.ToString();
+            this.DataContext = this;
         }
 
         private void BtnCancel_Click(object sender, RoutedEventArgs e)
@@ -125,13 +123,14 @@ namespace TestWPFUI.SQLiteCipher.UControls
                 Config.Name = Title;
                 Config.File = this.FileName;
                 Config.Password = this.Password;
+                Config.Version = Convert.ToInt32(this.Version);
                 if (string.IsNullOrWhiteSpace(this.Password))
                 {
-                    Config.ConnString = $"DataSource={this.FileName};";
+                    Config.ConnString = $"DataSource={this.FileName};Version={Version};";
                 }
                 else
                 {
-                    Config.ConnString = $"DataSource={this.FileName};Password={this.Password};";
+                    Config.ConnString = $"DataSource={this.FileName};Password={this.Password};Version={Version};";
                 }
                 if (this.IsNew)
                 {

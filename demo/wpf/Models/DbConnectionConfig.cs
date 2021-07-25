@@ -32,6 +32,10 @@ namespace TestWPFUI.SQLiteCipher.Models
         /// </summary>
         public bool IsEditable { get; set; }
         /// <summary>
+        /// 版本
+        /// </summary>
+        public Int32 Version { get; set; } = 4;
+        /// <summary>
         /// 构造
         /// </summary>
         public DbConnectionConfig()
