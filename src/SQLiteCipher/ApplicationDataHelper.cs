@@ -1,11 +1,11 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace System.Data.SQLiteCipher
 {
+    /// <summary>
+    /// 应用数据帮助
+    /// </summary>
     internal class ApplicationDataHelper
     {
         private static object _appData;

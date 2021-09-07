@@ -14,11 +14,9 @@ namespace System.Data.SQLiteCipher
         /// 三版本
         /// </summary>
         V3 = 3,
-#if !NETFrame
         /// <summary>
         /// 四版本
         /// </summary>
         V4 = 4,
-#endif
     }
 }
