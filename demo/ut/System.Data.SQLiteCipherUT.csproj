@@ -23,6 +23,6 @@
 		<PackageReference Include="MSTest.TestFramework" Version="2.1.2" />
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\System.Data.SQLiteCipher.csproj" />
+	  <ProjectReference Include="..\..\src\SQLiteCipher\System.Data.SQLiteCipher.csproj" />
 	</ItemGroup>
 </Project>

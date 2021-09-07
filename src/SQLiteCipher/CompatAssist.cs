@@ -1,42 +1,60 @@
-//
-// Copyright (c) 2009-2019 Krueger Systems, Inc.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a copy
-// of this software and associated documentation files (the "Software"), to deal
-// in the Software without restriction, including without limitation the rights
-// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-// copies of the Software, and to permit persons to whom the Software is
-// furnished to do so, subject to the following conditions:
-//
-// The above copyright notice and this permission notice shall be included in
-// all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-// THE SOFTWARE.
-//
-#if NET40
 using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Reflection;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Runtime.CompilerServices;
+using System.Text;
 
 namespace System.Data.SQLiteCipher
 {
+    internal static class InnerStaticCaller
+    {
+        public static string utf8_to_string(this string value)
+        {
+            return value ?? string.Empty;
+        }
+#if NET40
+        public static Object GetValue(this PropertyInfo prop, object model)
+        {
+            return prop.GetValue(null, null);
+        }
+        public static TypeInfo GetTypeInfo(this Type type)
+        {
+            return new TypeInfo(type);
+        }
+#endif
+#if NET40 || NET45
+        public static PropertyInfo GetRuntimeProperty(this Type type, string name)
+        {
+            return type.GetProperty(name);
+        }
+        public static IEnumerable<PropertyInfo> GetRuntimeProperties(this Type type)
+        {
+            return type.GetProperties(BindingFlags.NonPublic | BindingFlags.Public |
+                                      BindingFlags.Static | BindingFlags.Instance);
+        }
+        public static T[] AsSpan<T>(this T[] arr, int start, int length)
+        {
+            return arr.Skip(start).Take(length).ToArray();
+        }
+        public static T[] ToArray<T>(this T[] arr)
+        {
+            return arr;
+        }
+#endif
+        /// <summary>
+        /// è·å–å¯¹è±¡çš„Jsonå­—ç¬¦ä¸²
+        /// Newtonsoft.Json.JsonConvert
+        /// </summary>
+        public static string GetJsonString<T>(this T value)
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(value);
+        }
+    }
+#if NET40
     /// <summary>
-    /// Î¯ÍĞ
+    /// å§”æ‰˜
     /// </summary>
     /// <param name="user_data"></param>
     /// <param name="s1"></param>
@@ -57,25 +75,25 @@ namespace System.Data.SQLiteCipher
         }
     }
     /// <summary>
-    /// ÀàĞÍĞÅÏ¢
+    /// ç±»å‹ä¿¡æ¯
     /// </summary>
     public class TypeInfo : Type
     {
         private readonly Type innerType;
         /// <summary>
-        /// ×Ô¶¨ÒåÊôĞÔ
+        /// è‡ªå®šä¹‰å±æ€§
         /// </summary>
         public Attribute[] CustomAttributes { get; }
         /// <summary>
-        /// ²ÎÊı
+        /// å‚æ•°
         /// </summary>
         public Type[] GenericTypeArguments { get; }
         /// <summary>
-        /// ¶¨ÒåÊôĞÔ
+        /// å®šä¹‰å±æ€§
         /// </summary>
         public PropertyInfo[] DeclaredProperties { get; }
         /// <summary>
-        /// ¹¹Ôì
+        /// æ„é€ 
         /// </summary>
         /// <param name="type"></param>
         public TypeInfo(Type type)
@@ -87,43 +105,43 @@ namespace System.Data.SQLiteCipher
             GUID = Guid.NewGuid();
         }
         /// <summary>
-        /// Î¨Ò»±êÊ¶
+        /// å”¯ä¸€æ ‡è¯†
         /// </summary>
         public override Guid GUID { get; }
         /// <summary>
-        /// Ä£ĞÍ
+        /// æ¨¡å‹
         /// </summary>
         public override Module Module => innerType.Module;
         /// <summary>
-        /// ³ÌĞò¼¯
+        /// ç¨‹åºé›†
         /// </summary>
         public override Assembly Assembly => innerType.Assembly;
         /// <summary>
-        /// È«Ãû
+        /// å…¨å
         /// </summary>
         public override string FullName => innerType.FullName;
         /// <summary>
-        /// ÃüÃû¿Õ¼ä
+        /// å‘½åç©ºé—´
         /// </summary>
         public override string Namespace => innerType.Namespace;
         /// <summary>
-        /// ³ÌĞò¼¯Ãû³Æ
+        /// ç¨‹åºé›†åç§°
         /// </summary>
         public override string AssemblyQualifiedName => innerType.AssemblyQualifiedName;
         /// <summary>
-        /// »ùÀàĞÍ
+        /// åŸºç±»å‹
         /// </summary>
         public override Type BaseType => innerType.BaseType;
         /// <summary>
-        /// ÏµÍ³ÀàĞÍ
+        /// ç³»ç»Ÿç±»å‹
         /// </summary>
         public override Type UnderlyingSystemType => innerType.UnderlyingSystemType;
         /// <summary>
-        /// Ãû³Æ
+        /// åç§°
         /// </summary>
         public override string Name => innerType.Name;
         /// <summary>
-        /// »ñÈ¡¹¹Ôì·½·¨
+        /// è·å–æ„é€ æ–¹æ³•
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -132,7 +150,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetConstructors(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡×Ô¶¨Òå×¢½â
+        /// è·å–è‡ªå®šä¹‰æ³¨è§£
         /// </summary>
         /// <param name="inherit"></param>
         /// <returns></returns>
@@ -141,7 +159,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetCustomAttributes(inherit);
         }
         /// <summary>
-        /// »ñÈ¡×Ô¶¨Òå×¢½â
+        /// è·å–è‡ªå®šä¹‰æ³¨è§£
         /// </summary>
         /// <param name="attributeType"></param>
         /// <param name="inherit"></param>
@@ -151,7 +169,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetCustomAttributes(attributeType, inherit);
         }
         /// <summary>
-        /// »ñÈ¡ÔªËØÀàĞÍ
+        /// è·å–å…ƒç´ ç±»å‹
         /// </summary>
         /// <returns></returns>
         public override Type GetElementType()
@@ -159,7 +177,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetElementType();
         }
         /// <summary>
-        /// »ñÈ¡ÊÂ¼ş
+        /// è·å–äº‹ä»¶
         /// </summary>
         /// <param name="name"></param>
         /// <param name="bindingAttr"></param>
@@ -169,7 +187,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetEvent(name, bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡ÊÂ¼ş
+        /// è·å–äº‹ä»¶
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -178,7 +196,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetEvents(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡×Ö¶Î
+        /// è·å–å­—æ®µ
         /// </summary>
         /// <param name="name"></param>
         /// <param name="bindingAttr"></param>
@@ -188,7 +206,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetField(name, bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡×Ö¶Î
+        /// è·å–å­—æ®µ
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -197,7 +215,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetFields(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡½Ó¿Ú
+        /// è·å–æ¥å£
         /// </summary>
         /// <param name="name"></param>
         /// <param name="ignoreCase"></param>
@@ -207,7 +225,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetInterface(name, ignoreCase);
         }
         /// <summary>
-        /// »ñÈ¡½Ó¿Ú
+        /// è·å–æ¥å£
         /// </summary>
         /// <returns></returns>
         public override Type[] GetInterfaces()
@@ -215,7 +233,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetInterfaces();
         }
         /// <summary>
-        /// »ñÈ¡³ÉÔ±
+        /// è·å–æˆå‘˜
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -224,7 +242,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetMembers(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡·½·¨
+        /// è·å–æ–¹æ³•
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -233,7 +251,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetMethods(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡Ç¶Ì×ÀàĞÍ
+        /// è·å–åµŒå¥—ç±»å‹
         /// </summary>
         /// <param name="name"></param>
         /// <param name="bindingAttr"></param>
@@ -243,7 +261,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetNestedType(name, bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡Ç¶Ì×ÀàĞÍ
+        /// è·å–åµŒå¥—ç±»å‹
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -252,7 +270,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetNestedTypes(bindingAttr);
         }
         /// <summary>
-        /// »ñÈ¡ÊôĞÔÊı×é
+        /// è·å–å±æ€§æ•°ç»„
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <returns></returns>
@@ -261,7 +279,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetProperties(bindingAttr);
         }
         /// <summary>
-        /// µ÷ÓÃ³ÉÔ±
+        /// è°ƒç”¨æˆå‘˜
         /// </summary>
         /// <param name="name"></param>
         /// <param name="invokeAttr"></param>
@@ -277,7 +295,7 @@ namespace System.Data.SQLiteCipher
             return innerType.InvokeMember(name, invokeAttr, binder, target, args, modifiers, culture, namedParameters);
         }
         /// <summary>
-        /// ÒÑ¶¨Òå
+        /// å·²å®šä¹‰
         /// </summary>
         /// <param name="attributeType"></param>
         /// <param name="inherit"></param>
@@ -287,7 +305,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsDefined(attributeType, inherit);
         }
         /// <summary>
-        /// »ñÈ¡×¢½â±ê¼ÇÊµÏÖ
+        /// è·å–æ³¨è§£æ ‡è®°å®ç°
         /// </summary>
         /// <returns></returns>
         protected override TypeAttributes GetAttributeFlagsImpl()
@@ -295,7 +313,7 @@ namespace System.Data.SQLiteCipher
             return innerType.Attributes;
         }
         /// <summary>
-        /// »ñÈ¡¹¹Ôì·½·¨ÊµÏÖ
+        /// è·å–æ„é€ æ–¹æ³•å®ç°
         /// </summary>
         /// <param name="bindingAttr"></param>
         /// <param name="binder"></param>
@@ -308,7 +326,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetConstructor(bindingAttr, binder, callConvention, types, modifiers);
         }
         /// <summary>
-        /// »ñÈ¡·½·¨ÊµÏÖ
+        /// è·å–æ–¹æ³•å®ç°
         /// </summary>
         /// <param name="name"></param>
         /// <param name="bindingAttr"></param>
@@ -322,7 +340,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetMethod(name, bindingAttr, binder, callConvention, types, modifiers);
         }
         /// <summary>
-        /// »ñÈ¡ÊôĞÔÊµÏÖ
+        /// è·å–å±æ€§å®ç°
         /// </summary>
         /// <param name="name"></param>
         /// <param name="bindingAttr"></param>
@@ -336,7 +354,7 @@ namespace System.Data.SQLiteCipher
             return innerType.GetProperty(name, bindingAttr, binder, returnType, types, modifiers);
         }
         /// <summary>
-        /// ÓĞÔªËØÀàĞÍÊµÏÖ
+        /// æœ‰å…ƒç´ ç±»å‹å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool HasElementTypeImpl()
@@ -344,7 +362,7 @@ namespace System.Data.SQLiteCipher
             return innerType.HasElementType;
         }
         /// <summary>
-        /// ÊÇÊı×éÊµÏÖ
+        /// æ˜¯æ•°ç»„å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool IsArrayImpl()
@@ -352,7 +370,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsArray;
         }
         /// <summary>
-        /// ÊÇÒıÓÃÊµÏÖ
+        /// æ˜¯å¼•ç”¨å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool IsByRefImpl()
@@ -360,7 +378,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsByRef;
         }
         /// <summary>
-        /// ÊÇCOM¶ÔÏóÊµÏÖ
+        /// æ˜¯COMå¯¹è±¡å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool IsCOMObjectImpl()
@@ -368,7 +386,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsCOMObject;
         }
         /// <summary>
-        /// ÊÇÖ¸ÏòÊµÏÖ
+        /// æ˜¯æŒ‡å‘å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool IsPointerImpl()
@@ -376,7 +394,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsPointer;
         }
         /// <summary>
-        /// ·ÇÔ­Ê¼µÄÊµÏÖ
+        /// éåŸå§‹çš„å®ç°
         /// </summary>
         /// <returns></returns>
         protected override bool IsPrimitiveImpl()
@@ -384,7 +402,7 @@ namespace System.Data.SQLiteCipher
             return innerType.IsPrimitive;
         }
         /// <summary>
-        /// »ñÈ¡¶¨Òå·½·¨
+        /// è·å–å®šä¹‰æ–¹æ³•
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -393,5 +411,15 @@ namespace System.Data.SQLiteCipher
             return innerType.GetMethod(name);
         }
     }
-}
 #endif
+#if NET45
+        /// <summary>
+        /// å§”æ‰˜
+        /// </summary>
+        /// <param name="user_data"></param>
+        /// <param name="s1"></param>
+        /// <param name="s2"></param>
+        /// <returns></returns>
+        public delegate int strdelegate_collation(object user_data, string s1, string s2);
+#endif
+}
