@@ -2,7 +2,11 @@ using System;
 
 namespace SQLitePCL
 {
+#if NET40
+    public delegate int delegate_collation(object user_data, byte[] s1, byte[] s2);
+#else
     public delegate int delegate_collation(object user_data, ReadOnlySpan<byte> s1, ReadOnlySpan<byte> s2);
+#endif
     public delegate void delegate_update(object user_data, int type, utf8z database, utf8z table, long rowid);
 
     public delegate void delegate_log(object user_data, int errorCode, utf8z msg);
@@ -93,8 +97,13 @@ namespace SQLitePCL
         int sqlite3_extended_errcode(sqlite3 db);
         utf8z sqlite3_errstr(int rc); /* 3.7.15+ */
 
+#if NET40
+        int sqlite3_prepare_v2(sqlite3 db, byte[] sql, out IntPtr stmt, out byte[] remain);
+        int sqlite3_prepare_v3(sqlite3 db, byte[] sql, uint flags, out IntPtr stmt, out byte[] remain);
+#else
         int sqlite3_prepare_v2(sqlite3 db, ReadOnlySpan<byte> sql, out IntPtr stmt, out ReadOnlySpan<byte> remain);
         int sqlite3_prepare_v3(sqlite3 db, ReadOnlySpan<byte> sql, uint flags, out IntPtr stmt, out ReadOnlySpan<byte> remain);
+#endif
 
         [Obsolete]
         int sqlite3_prepare_v2(sqlite3 db, utf8z sql, out IntPtr stmt, out utf8z remain);
@@ -113,13 +122,22 @@ namespace SQLitePCL
 
         int sqlite3_bind_zeroblob(sqlite3_stmt stmt, int index, int size);
         utf8z sqlite3_bind_parameter_name(sqlite3_stmt stmt, int index);
+#if NET40
+        int sqlite3_bind_blob(sqlite3_stmt stmt, int index, byte[] blob);
+#else
         int sqlite3_bind_blob(sqlite3_stmt stmt, int index, ReadOnlySpan<byte> blob);
+#endif
         int sqlite3_bind_double(sqlite3_stmt stmt, int index, double val);
         int sqlite3_bind_int(sqlite3_stmt stmt, int index, int val);
         int sqlite3_bind_int64(sqlite3_stmt stmt, int index, long val);
         int sqlite3_bind_null(sqlite3_stmt stmt, int index);
+#if NET40
+        int sqlite3_bind_text(sqlite3_stmt stmt, int index, byte[] text);
+        int sqlite3_bind_text16(sqlite3_stmt stmt, int index, string text);
+#else
         int sqlite3_bind_text(sqlite3_stmt stmt, int index, ReadOnlySpan<byte> text);
         int sqlite3_bind_text16(sqlite3_stmt stmt, int index, ReadOnlySpan<char> text);
+#endif
         int sqlite3_bind_text(sqlite3_stmt stmt, int index, utf8z text);
         int sqlite3_bind_parameter_count(sqlite3_stmt stmt);
         int sqlite3_bind_parameter_index(sqlite3_stmt stmt, utf8z strName);
@@ -134,7 +152,11 @@ namespace SQLitePCL
         double sqlite3_column_double(sqlite3_stmt stmt, int index);
         int sqlite3_column_int(sqlite3_stmt stmt, int index);
         long sqlite3_column_int64(sqlite3_stmt stmt, int index);
+#if NET40
+        byte[] sqlite3_column_blob(sqlite3_stmt stmt, int index);
+#else
         ReadOnlySpan<byte> sqlite3_column_blob(sqlite3_stmt stmt, int index);
+#endif
         int sqlite3_column_bytes(sqlite3_stmt stmt, int index);
         int sqlite3_column_type(sqlite3_stmt stmt, int index);
         utf8z sqlite3_column_decltype(sqlite3_stmt stmt, int index);
@@ -154,8 +176,13 @@ namespace SQLitePCL
         int sqlite3_blob_open(sqlite3 db, utf8z db_utf8, utf8z table_utf8, utf8z col_utf8, long rowid, int flags, out sqlite3_blob blob);
         int sqlite3_blob_bytes(sqlite3_blob blob);
         int sqlite3_blob_reopen(sqlite3_blob blob, long rowid);
+#if NET40
+        int sqlite3_blob_write(sqlite3_blob blob, byte[] b, int offset);
+        int sqlite3_blob_read(sqlite3_blob blob, byte[] b, int offset);
+#else
         int sqlite3_blob_write(sqlite3_blob blob, ReadOnlySpan<byte> b, int offset);
         int sqlite3_blob_read(sqlite3_blob blob, Span<byte> b, int offset);
+#endif
         int sqlite3_blob_close(IntPtr blob);
 
         int sqlite3_config_log(delegate_log func, object v);
@@ -174,22 +201,37 @@ namespace SQLitePCL
 
         int sqlite3_db_status(sqlite3 db, int op, out int current, out int highest, int resetFlg);
 
+#if NET40
+        void sqlite3_result_blob(IntPtr context, byte[] val);
+#else
         void sqlite3_result_blob(IntPtr context, ReadOnlySpan<byte> val);
+#endif
         void sqlite3_result_double(IntPtr context, double val);
+#if NET40
+        void sqlite3_result_error(IntPtr context, byte[] strErr);
+#else
         void sqlite3_result_error(IntPtr context, ReadOnlySpan<byte> strErr);
+#endif
         void sqlite3_result_error(IntPtr context, utf8z strErr);
         void sqlite3_result_int(IntPtr context, int val);
         void sqlite3_result_int64(IntPtr context, long val);
         void sqlite3_result_null(IntPtr context);
+#if NET40
+        void sqlite3_result_text(IntPtr context, byte[] val);
+#else
         void sqlite3_result_text(IntPtr context, ReadOnlySpan<byte> val);
+#endif
         void sqlite3_result_text(IntPtr context, utf8z val);
         void sqlite3_result_zeroblob(IntPtr context, int n);
         // TODO sqlite3_result_value
         void sqlite3_result_error_toobig(IntPtr context);
         void sqlite3_result_error_nomem(IntPtr context);
         void sqlite3_result_error_code(IntPtr context, int code);
-
+#if NET40
+        byte[] sqlite3_value_blob(IntPtr p);
+#else
         ReadOnlySpan<byte> sqlite3_value_blob(IntPtr p);
+#endif
         int sqlite3_value_bytes(IntPtr p);
         double sqlite3_value_double(IntPtr p);
         int sqlite3_value_int(IntPtr p);
@@ -222,12 +264,17 @@ namespace SQLitePCL
         int sqlite3_strnicmp(IntPtr p, IntPtr q, int n);
 
         void sqlite3_free(IntPtr p);
-
+#if NET40
+        int sqlite3_key(sqlite3 db, byte[] key);
+        int sqlite3_key_v2(sqlite3 db, utf8z dbname, byte[] key);
+        int sqlite3_rekey(sqlite3 db, byte[] key);
+        int sqlite3_rekey_v2(sqlite3 db, utf8z dbname, byte[] key);
+#else
         int sqlite3_key(sqlite3 db, ReadOnlySpan<byte> key);
         int sqlite3_key_v2(sqlite3 db, utf8z dbname, ReadOnlySpan<byte> key);
         int sqlite3_rekey(sqlite3 db, ReadOnlySpan<byte> key);
         int sqlite3_rekey_v2(sqlite3 db, utf8z dbname, ReadOnlySpan<byte> key);
-
+#endif
 #if not // TODO consider
         int sqlite3_load_extension(sqlite3 db, utf8z fileName, utf8z procName, ref IntPtr pError);
 #endif

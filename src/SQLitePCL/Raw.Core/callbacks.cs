@@ -405,10 +405,17 @@ namespace SQLitePCL
             return hi;
         }
 
+#if NET40
+        public int call(byte[] s1, byte[] s2)
+        {
+            return _func(_user_data, s1, s2);
+        }
+#else
         public int call(ReadOnlySpan<byte> s1, ReadOnlySpan<byte> s2)
         {
             return _func(_user_data, s1, s2);
         }
+#endif
     }
 
     public class exec_hook_info

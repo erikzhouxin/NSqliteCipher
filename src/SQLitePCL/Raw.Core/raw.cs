@@ -90,7 +90,7 @@ namespace SQLitePCL
         public const int SQLITE_CONFIG_MEMSTATUS = 9;  /* boolean */
         public const int SQLITE_CONFIG_MUTEX = 10;  /* sqlite3_mutex_methods* */
         public const int SQLITE_CONFIG_GETMUTEX = 11;  /* sqlite3_mutex_methods* */
-                                                       /* previously SQLITE_CONFIG_CHUNKALLOC 12 which is now unused. */
+        /* previously SQLITE_CONFIG_CHUNKALLOC 12 which is now unused. */
         public const int SQLITE_CONFIG_LOOKASIDE = 13;  /* int int */
         public const int SQLITE_CONFIG_PCACHE = 14;  /* no-op */
         public const int SQLITE_CONFIG_GETPCACHE = 15;  /* no-op */
@@ -516,7 +516,7 @@ namespace SQLitePCL
             }
             return Provider.sqlite3_create_collation(db, p, v, cb);
         }
-        
+
         // note the extra underscore in the name of the following function.
         // this function is not in sqlite.
         // it is being added for SQLitePCLRaw 2.0.5.
@@ -560,6 +560,17 @@ namespace SQLitePCL
             return Provider.sqlite3_db_status(db, op, out current, out highest, resetFlg);
         }
 
+#if NET40
+        // TODO do we need this to be public?
+        public static string utf8_span_to_string(this byte[] p)
+        {
+            if (p.Length == 0)
+            {
+                return "";
+            }
+            return System.Text.Encoding.UTF8.GetString(p);
+        }
+#else
         // TODO do we need this to be public?
         public static string utf8_span_to_string(this ReadOnlySpan<byte> p)
         {
@@ -575,7 +586,29 @@ namespace SQLitePCL
                 }
             }
         }
+#endif
 
+#if NET40
+        static public int sqlite3_key(sqlite3 db, byte[] k)
+        {
+            return Provider.sqlite3_key(db, k);
+        }
+
+        static public int sqlite3_key_v2(sqlite3 db, utf8z name, byte[] k)
+        {
+            return Provider.sqlite3_key_v2(db, name, k);
+        }
+
+        static public int sqlite3_rekey(sqlite3 db, byte[] k)
+        {
+            return Provider.sqlite3_rekey(db, k);
+        }
+
+        static public int sqlite3_rekey_v2(sqlite3 db, utf8z name, byte[] k)
+        {
+            return Provider.sqlite3_rekey_v2(db, name, k);
+        }
+#else
         static public int sqlite3_key(sqlite3 db, ReadOnlySpan<byte> k)
         {
             return Provider.sqlite3_key(db, k);
@@ -595,7 +628,7 @@ namespace SQLitePCL
         {
             return Provider.sqlite3_rekey_v2(db, name, k);
         }
-
+#endif
         static public utf8z sqlite3_libversion()
         {
             return Provider.sqlite3_libversion();
@@ -636,17 +669,17 @@ namespace SQLitePCL
             return Provider.sqlite3_config(op, val);
         }
 
-        static public int sqlite3_db_config(sqlite3 db, int op, utf8z val) 
+        static public int sqlite3_db_config(sqlite3 db, int op, utf8z val)
         {
             return Provider.sqlite3_db_config(db, op, val);
         }
 
-        static public int sqlite3_db_config(sqlite3 db, int op, int val, out int result) 
+        static public int sqlite3_db_config(sqlite3 db, int op, int val, out int result)
         {
             return Provider.sqlite3_db_config(db, op, val, out result);
         }
-        
-        static public int sqlite3_db_config(sqlite3 db, int op, IntPtr ptr, int int0, int int1) 
+
+        static public int sqlite3_db_config(sqlite3 db, int op, IntPtr ptr, int int0, int int1)
         {
             return Provider.sqlite3_db_config(db, op, ptr, int0, int1);
         }
@@ -754,13 +787,21 @@ namespace SQLitePCL
             return Provider.sqlite3_errstr(rc);
         }
 
+#if NET40
+        static public int sqlite3_prepare_v2(sqlite3 db, byte[] sql, out sqlite3_stmt stmt)
+        {
+            int rc = Provider.sqlite3_prepare_v2(db, sql, out var p, out var sp_tail);
+            stmt = sqlite3_stmt.From(p, db);
+            return rc;
+        }
+#else
         static public int sqlite3_prepare_v2(sqlite3 db, ReadOnlySpan<byte> sql, out sqlite3_stmt stmt)
         {
             int rc = Provider.sqlite3_prepare_v2(db, sql, out var p, out var sp_tail);
             stmt = sqlite3_stmt.From(p, db);
             return rc;
         }
-
+#endif
         static public int sqlite3_prepare_v2(sqlite3 db, utf8z sql, out sqlite3_stmt stmt)
         {
             int rc = Provider.sqlite3_prepare_v2(db, sql, out var p, out var sp_tail);
@@ -771,10 +812,23 @@ namespace SQLitePCL
         static public int sqlite3_prepare_v2(sqlite3 db, string sql, out sqlite3_stmt stmt)
         {
             var ba = sql.to_utf8_with_z();
+#if NET40
+            var sp = ba;
+#else
             var sp = new ReadOnlySpan<byte>(ba);
+#endif
             int rc = sqlite3_prepare_v2(db, sp, out stmt, out var sp_tail);
             return rc;
         }
+#if NET40
+        static public int sqlite3_prepare_v2(sqlite3 db, byte[] sql, out sqlite3_stmt stmt, out byte[] tail)
+        {
+            // #430 happens here
+            int rc = Provider.sqlite3_prepare_v2(db, sql, out var p, out tail);
+            stmt = sqlite3_stmt.From(p, db);
+            return rc;
+        }
+#else
         static public int sqlite3_prepare_v2(sqlite3 db, ReadOnlySpan<byte> sql, out sqlite3_stmt stmt, out ReadOnlySpan<byte> tail)
         {
             // #430 happens here
@@ -782,7 +836,7 @@ namespace SQLitePCL
             stmt = sqlite3_stmt.From(p, db);
             return rc;
         }
-
+#endif
         static public int sqlite3_prepare_v2(sqlite3 db, utf8z sql, out sqlite3_stmt stmt, out utf8z tail)
         {
             int rc = Provider.sqlite3_prepare_v2(db, sql, out var p, out tail);
@@ -793,19 +847,44 @@ namespace SQLitePCL
         static public int sqlite3_prepare_v2(sqlite3 db, string sql, out sqlite3_stmt stmt, out string tail)
         {
             var ba = sql.to_utf8_with_z();
+#if NET40
+            var sp = ba;
+            int rc = sqlite3_prepare_v2(db, sp, out stmt, out var sp_tail);
+            byte[] ta = GetSlice(sp_tail);
+            tail = utf8_span_to_string(ta);
+#else
             var sp = new ReadOnlySpan<byte>(ba);
             int rc = sqlite3_prepare_v2(db, sp, out stmt, out var sp_tail);
             tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
+#endif
             return rc;
         }
 
+#if NET40
+        private static byte[] GetSlice(byte[] sp_tail, int dist = 1)
+        {
+            var ta = new byte[sp_tail.Length - dist];
+            for (int i = 0; i < ta.Length; i++)
+            {
+                ta[i] = sp_tail[i];
+            }
+            return ta;
+        }
+
+        static public int sqlite3_prepare_v3(sqlite3 db, byte[] sql, uint flags, out sqlite3_stmt stmt)
+        {
+            int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out var sp_tail);
+            stmt = sqlite3_stmt.From(p, db);
+            return rc;
+        }
+#else
         static public int sqlite3_prepare_v3(sqlite3 db, ReadOnlySpan<byte> sql, uint flags, out sqlite3_stmt stmt)
         {
             int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out var sp_tail);
             stmt = sqlite3_stmt.From(p, db);
             return rc;
         }
-
+#endif
         static public int sqlite3_prepare_v3(sqlite3 db, utf8z sql, uint flags, out sqlite3_stmt stmt)
         {
             int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out var sp_tail);
@@ -816,17 +895,29 @@ namespace SQLitePCL
         static public int sqlite3_prepare_v3(sqlite3 db, string sql, uint flags, out sqlite3_stmt stmt)
         {
             var ba = sql.to_utf8_with_z();
+#if NET40
+            var sp = ba;
+#else
             var sp = new ReadOnlySpan<byte>(ba);
+#endif
             int rc = sqlite3_prepare_v3(db, sp, flags, out stmt, out var sp_tail);
             return rc;
         }
+#if NET40
+        static public int sqlite3_prepare_v3(sqlite3 db, byte[] sql, uint flags, out sqlite3_stmt stmt, out byte[] tail)
+        {
+            int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out tail);
+            stmt = sqlite3_stmt.From(p, db);
+            return rc;
+        }
+#else
         static public int sqlite3_prepare_v3(sqlite3 db, ReadOnlySpan<byte> sql, uint flags, out sqlite3_stmt stmt, out ReadOnlySpan<byte> tail)
         {
             int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out tail);
             stmt = sqlite3_stmt.From(p, db);
             return rc;
         }
-
+#endif
         static public int sqlite3_prepare_v3(sqlite3 db, utf8z sql, uint flags, out sqlite3_stmt stmt, out utf8z tail)
         {
             int rc = Provider.sqlite3_prepare_v3(db, sql, flags, out var p, out tail);
@@ -837,9 +928,16 @@ namespace SQLitePCL
         static public int sqlite3_prepare_v3(sqlite3 db, string sql, uint flags, out sqlite3_stmt stmt, out string tail)
         {
             var ba = sql.to_utf8_with_z();
+#if NET40
+            var sp = ba;
+            int rc = sqlite3_prepare_v3(db, sp, flags, out stmt, out var sp_tail);
+            var ta = GetSlice(sp_tail);
+            tail = utf8_span_to_string(ta);
+#else
             var sp = new ReadOnlySpan<byte>(ba);
             int rc = sqlite3_prepare_v3(db, sp, flags, out stmt, out var sp_tail);
             tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
+#endif
             return rc;
         }
 
@@ -1026,6 +1124,17 @@ namespace SQLitePCL
             Provider.sqlite3_result_null(context.ptr);
         }
 
+#if NET40
+        static public void sqlite3_result_blob(sqlite3_context context, byte[] val)
+        {
+            Provider.sqlite3_result_blob(context.ptr, val);
+        }
+
+        static public void sqlite3_result_error(sqlite3_context context, byte[] val)
+        {
+            Provider.sqlite3_result_error(context.ptr, val);
+        }
+#else
         static public void sqlite3_result_blob(sqlite3_context context, ReadOnlySpan<byte> val)
         {
             Provider.sqlite3_result_blob(context.ptr, val);
@@ -1035,7 +1144,7 @@ namespace SQLitePCL
         {
             Provider.sqlite3_result_error(context.ptr, val);
         }
-
+#endif
         static public void sqlite3_result_error(sqlite3_context context, utf8z val)
         {
             Provider.sqlite3_result_error(context.ptr, val);
@@ -1046,11 +1155,17 @@ namespace SQLitePCL
             sqlite3_result_error(context, val.to_utf8z());
         }
 
+#if NET40
+        static public void sqlite3_result_text(sqlite3_context context, byte[] val)
+        {
+            Provider.sqlite3_result_text(context.ptr, val);
+        }
+#else
         static public void sqlite3_result_text(sqlite3_context context, ReadOnlySpan<byte> val)
         {
             Provider.sqlite3_result_text(context.ptr, val);
         }
-
+#endif
         static public void sqlite3_result_text(sqlite3_context context, utf8z val)
         {
             Provider.sqlite3_result_text(context.ptr, val);
@@ -1098,11 +1213,17 @@ namespace SQLitePCL
             Provider.sqlite3_result_error_code(context.ptr, code);
         }
 
+#if NET40
+        static public byte[] sqlite3_value_blob(sqlite3_value val)
+        {
+            return Provider.sqlite3_value_blob(val.ptr);
+        }
+#else
         static public ReadOnlySpan<byte> sqlite3_value_blob(sqlite3_value val)
         {
             return Provider.sqlite3_value_blob(val.ptr);
         }
-
+#endif
         static public int sqlite3_value_bytes(sqlite3_value val)
         {
             return Provider.sqlite3_value_bytes(val.ptr);
@@ -1133,11 +1254,17 @@ namespace SQLitePCL
             return Provider.sqlite3_value_text(val.ptr);
         }
 
+#if NET40
+        static public int sqlite3_bind_blob(sqlite3_stmt stmt, int index, byte[] blob)
+        {
+            return Provider.sqlite3_bind_blob(stmt, index, blob);
+        }
+#else
         static public int sqlite3_bind_blob(sqlite3_stmt stmt, int index, ReadOnlySpan<byte> blob)
         {
             return Provider.sqlite3_bind_blob(stmt, index, blob);
         }
-
+#endif
         static public int sqlite3_bind_double(sqlite3_stmt stmt, int index, double val)
         {
             return Provider.sqlite3_bind_double(stmt, index, val);
@@ -1158,6 +1285,17 @@ namespace SQLitePCL
             return Provider.sqlite3_bind_null(stmt, index);
         }
 
+#if NET40
+        static public int sqlite3_bind_text(sqlite3_stmt stmt, int index, byte[] val)
+        {
+            return Provider.sqlite3_bind_text(stmt, index, val);
+        }
+
+        static public int sqlite3_bind_text16(sqlite3_stmt stmt, int index, string val)
+        {
+            return Provider.sqlite3_bind_text16(stmt, index, val);
+        }
+#else
         static public int sqlite3_bind_text(sqlite3_stmt stmt, int index, ReadOnlySpan<byte> val)
         {
             return Provider.sqlite3_bind_text(stmt, index, val);
@@ -1167,7 +1305,7 @@ namespace SQLitePCL
         {
             return Provider.sqlite3_bind_text16(stmt, index, val);
         }
-
+#endif
         static public int sqlite3_bind_text(sqlite3_stmt stmt, int index, utf8z val)
         {
             return Provider.sqlite3_bind_text(stmt, index, val);
@@ -1188,7 +1326,11 @@ namespace SQLitePCL
                 var utf8ByteCount = Encoding.UTF8.GetByteCount(val);
                 if ((utf8ByteCount <= OptimizedLengthThreshold) && (utf8ByteCount > 0))
                 {
+#if NET40
+                    var bytes = new byte[utf8ByteCount];
+#else
                     Span<byte> bytes = stackalloc byte[utf8ByteCount];
+#endif
                     unsafe
                     {
                         fixed (char* charsPtr = val)
@@ -1285,10 +1427,17 @@ namespace SQLitePCL
             return Provider.sqlite3_column_int64(stmt, index);
         }
 
+#if NET40
+        static public byte[] sqlite3_column_blob(sqlite3_stmt stmt, int index)
+        {
+            return Provider.sqlite3_column_blob(stmt, index);
+        }
+#else
         static public ReadOnlySpan<byte> sqlite3_column_blob(sqlite3_stmt stmt, int index)
         {
             return Provider.sqlite3_column_blob(stmt, index);
         }
+#endif
 
         static public int sqlite3_column_bytes(sqlite3_stmt stmt, int index)
         {
@@ -1390,6 +1539,17 @@ namespace SQLitePCL
             return Provider.sqlite3_blob_reopen(blob, rowid);
         }
 
+#if NET40
+        static public int sqlite3_blob_write(sqlite3_blob blob, byte[] b, int offset)
+        {
+            return Provider.sqlite3_blob_write(blob, b, offset);
+        }
+
+        static public int sqlite3_blob_read(sqlite3_blob blob, byte[] b, int offset)
+        {
+            return Provider.sqlite3_blob_read(blob, b, offset);
+        }
+#else
         static public int sqlite3_blob_write(sqlite3_blob blob, ReadOnlySpan<byte> b, int offset)
         {
             return Provider.sqlite3_blob_write(blob, b, offset);
@@ -1399,7 +1559,7 @@ namespace SQLitePCL
         {
             return Provider.sqlite3_blob_read(blob, b, offset);
         }
-
+#endif
         // called by something that wants the return code
         static public int sqlite3_blob_close(sqlite3_blob blob)
         {
@@ -1455,14 +1615,14 @@ namespace SQLitePCL
             return Provider.sqlite3_win32_set_directory(typ, path.to_utf8z());
         }
 
-		static public int sqlite3_keyword_count()
-		{
-			return Provider.sqlite3_keyword_count();
-		}
+        static public int sqlite3_keyword_count()
+        {
+            return Provider.sqlite3_keyword_count();
+        }
 
-		static public int sqlite3_keyword_name(int i, out string name)
-		{
-			return Provider.sqlite3_keyword_name(i, out name);
-		}
+        static public int sqlite3_keyword_name(int i, out string name)
+        {
+            return Provider.sqlite3_keyword_name(i, out name);
+        }
     }
 }

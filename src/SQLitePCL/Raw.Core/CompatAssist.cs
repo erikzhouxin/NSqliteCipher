@@ -6,7 +6,7 @@ namespace SQLitePCL
 {
     internal static class CompatAssist
     {
-#if NET45
+#if NET45 || NET40
         public static unsafe string GetString(this Encoding encoding, byte* bytes, int byteCount)
         {
             var byteArray = new byte[byteCount];
