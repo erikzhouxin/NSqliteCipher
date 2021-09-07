@@ -3,7 +3,7 @@ using System.Data.Common;
 namespace System.Data.SQLiteCipher
 {
     /// <summary>
-    ///     Creates instances of various Microsoft.Data.Sqlite classes.
+    ///     Creates instances of various System.Data.SQLiteCipher classes.
     /// </summary>
     public class SqliteFactory : DbProviderFactory
     {

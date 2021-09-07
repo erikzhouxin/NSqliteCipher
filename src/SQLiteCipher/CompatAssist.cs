@@ -43,14 +43,6 @@ namespace System.Data.SQLiteCipher
             return arr;
         }
 #endif
-        /// <summary>
-        /// 获取对象的Json字符串
-        /// Newtonsoft.Json.JsonConvert
-        /// </summary>
-        public static string GetJsonString<T>(this T value)
-        {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(value);
-        }
     }
 #if NET40
     /// <summary>

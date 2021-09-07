@@ -5,7 +5,6 @@ using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection;
 
 namespace System.Data.SQLiteCipher
 {
@@ -32,15 +31,9 @@ namespace System.Data.SQLiteCipher
         private const string RecursiveTriggersKeyword = "Recursive Triggers";
         private const string VersionKeyword = "Version";
 
+        private static readonly IReadOnlyList<string> _validKeywords;
+        private static readonly IReadOnlyDictionary<string, SqliteConnKeywords> _keywords;
 
-        private static readonly IList<string> _validKeywords;
-        private static readonly IDictionary<string, SqliteConnKeywords> _keywords;
-
-        private SqliteOpenMode _mode = SqliteOpenMode.ReadWriteCreate;
-        private SqliteCacheMode _cache = SqliteCacheMode.Default;
-        private string _password = string.Empty;
-        private bool? _foreignKeys;
-        private bool _recursiveTriggers;
 
         static SqliteConnectionStringBuilder()
         {
@@ -104,10 +97,10 @@ namespace System.Data.SQLiteCipher
             set => base[DataSourceKeyword] = _dataSource = value;
         }
 
+        private SqliteOpenMode _mode = SqliteOpenMode.ReadWriteCreate;
         /// <summary>
         /// 数据打开模式
         /// </summary>
-        /// <value>The connection mode.</value>
         public virtual SqliteOpenMode Mode
         {
             get => _mode;
@@ -140,6 +133,50 @@ namespace System.Data.SQLiteCipher
             get => _driver;
             set => base[DriverKeyword] = _driver = value;
         }
+        private SqliteCacheMode _cache = SqliteCacheMode.Default;
+        /// <summary>
+        /// 缓存模式
+        /// </summary>
+        /// <seealso href="http://sqlite.org/sharedcache.html">SQLite Shared-Cache Mode</seealso>
+        public virtual SqliteCacheMode Cache
+        {
+            get => _cache;
+            set => base[CacheKeyword] = _cache = value;
+        }
+        private string _password = string.Empty;
+        /// <summary>
+        /// 加密密码,
+        /// 警告:SQLite库不支持加密时不起作用。指定时，<c>PRAGMA key</c>在打开连接后立即发送。
+        /// </summary>
+        public string Password
+        {
+            get => _password;
+            set => base[PasswordKeyword] = _password = value;
+        }
+        private bool? _foreignKeys;
+        /// <summary>
+        /// 是否启用外键约束
+        /// true: <c>PRAGMA foreign_keys = 1</c> 打开连接时发送;
+        /// false: <c>PRAGMA foreign_keys = 0</c> 打开连接时发送;
+        /// null: 不发送指令,使用默认值
+        /// </summary>
+        public bool? ForeignKeys
+        {
+            get => _foreignKeys;
+            set => base[ForeignKeysKeyword] = _foreignKeys = value;
+        }
+        private bool _recursiveTriggers;
+        /// <summary>
+        /// 启用递归触发器
+        /// true:<c>PRAGMA recursive_triggers</c>在打开连接时发送
+        /// fasle:不发送
+        /// </summary>
+        public bool RecursiveTriggers
+        {
+            get => _recursiveTriggers;
+            set => base[RecursiveTriggersKeyword] = _recursiveTriggers = value;
+        }
+
         /// <summary>
         /// 获取连接字符串中的关键词列表
         /// </summary>
@@ -157,51 +194,9 @@ namespace System.Data.SQLiteCipher
                 {
                     values[i] = GetAt((SqliteConnKeywords)i);
                 }
+
                 return new ReadOnlyCollection<object>(values);
             }
-        }
-
-        /// <summary>
-        /// 缓存模式
-        /// </summary>
-        /// <seealso href="http://sqlite.org/sharedcache.html">SQLite Shared-Cache Mode</seealso>
-        public virtual SqliteCacheMode Cache
-        {
-            get => _cache;
-            set => base[CacheKeyword] = _cache = value;
-        }
-
-        /// <summary>
-        /// 加密密码,
-        /// 警告:SQLite库不支持加密时不起作用。指定时，<c>PRAGMA key</c>在打开连接后立即发送。
-        /// </summary>
-        public string Password
-        {
-            get => _password;
-            set => base[PasswordKeyword] = _password = value;
-        }
-
-        /// <summary>
-        /// 是否启用外键约束
-        /// true: <c>PRAGMA foreign_keys = 1</c> 打开连接时发送;
-        /// false: <c>PRAGMA foreign_keys = 0</c> 打开连接时发送;
-        /// null: 不发送指令,使用默认值
-        /// </summary>
-        public bool? ForeignKeys
-        {
-            get => _foreignKeys;
-            set => base[ForeignKeysKeyword] = _foreignKeys = value;
-        }
-
-        /// <summary>
-        /// 启用递归触发器
-        /// true:<c>PRAGMA recursive_triggers</c>在打开连接时发送
-        /// fasle:不发送
-        /// </summary>
-        public bool RecursiveTriggers
-        {
-            get => _recursiveTriggers;
-            set => base[RecursiveTriggersKeyword] = _recursiveTriggers = value;
         }
 
         /// <summary>
@@ -266,7 +261,8 @@ namespace System.Data.SQLiteCipher
             }
         }
 
-        private static TEnum ConvertToEnum<TEnum>(object value) where TEnum : struct
+        private static TEnum ConvertToEnum<TEnum>(object value)
+            where TEnum : struct
         {
             if (value is string stringValue)
             {
@@ -274,7 +270,7 @@ namespace System.Data.SQLiteCipher
             }
             if (value is not TEnum enumValue)
             {
-                if (value.GetType().GetTypeInfo().IsEnum)
+                if (value.GetType().IsEnum)
                 {
                     throw new ArgumentException(Resources.ConvertFailed(value.GetType(), typeof(TEnum)));
                 }
@@ -292,7 +288,9 @@ namespace System.Data.SQLiteCipher
 
         private static bool? ConvertToNullableBoolean(object value)
         {
-            return value == null || (value is string stringValue && stringValue.Length == 0) ? null : (bool?)Convert.ToBoolean(value, CultureInfo.InvariantCulture);
+            return value == null || (value is string stringValue && stringValue.Length == 0)
+                ? null
+                : (bool?)Convert.ToBoolean(value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
@@ -301,6 +299,7 @@ namespace System.Data.SQLiteCipher
         public override void Clear()
         {
             base.Clear();
+
             for (var i = 0; i < _validKeywords.Count; i++)
             {
                 Reset((SqliteConnKeywords)i);
@@ -324,6 +323,7 @@ namespace System.Data.SQLiteCipher
             if (_keywords.TryGetValue(keyword, out var index) && base.Remove(_validKeywords[(int)index]))
             {
                 Reset(index);
+
                 return true;
             }
             return false;
@@ -333,7 +333,7 @@ namespace System.Data.SQLiteCipher
         ///     Determines whether the specified key should be serialized into the connection string.
         /// </summary>
         /// <param name="keyword">The key to check.</param>
-        /// <returns>true if it should be serialized; otherwise, false.</returns>
+        /// <returns><see langword="true" /> if it should be serialized; otherwise, <see langword="false" />. </returns>
         public override bool ShouldSerialize(string keyword)
             => _keywords.TryGetValue(keyword, out var index) && base.ShouldSerialize(_validKeywords[(int)index]);
 
@@ -342,7 +342,7 @@ namespace System.Data.SQLiteCipher
         /// </summary>
         /// <param name="keyword">The key.</param>
         /// <param name="value">The value.</param>
-        /// <returns>true if the key was used; otherwise, false.</returns>
+        /// <returns><see langword="true" /> if the key was used; otherwise, <see langword="false" />. </returns>
         public override bool TryGetValue(string keyword, out object value)
         {
             if (!_keywords.TryGetValue(keyword, out var index))
@@ -406,15 +406,17 @@ namespace System.Data.SQLiteCipher
                 case SqliteConnKeywords.RecursiveTriggers:
                     _recursiveTriggers = false;
                     return;
+
                 case SqliteConnKeywords.Driver:
                     _driver = string.Empty;
-                    break;
+                    return;
                 case SqliteConnKeywords.Provider:
                     _provider = string.Empty;
-                    break;
+                    return;
                 case SqliteConnKeywords.Version:
                     _version = DefaultVersion;
-                    break;
+                    return;
+
                 default:
                     Debug.Assert(false, "Unexpected keyword: " + index);
                     return;

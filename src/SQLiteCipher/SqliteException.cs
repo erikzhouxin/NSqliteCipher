@@ -7,6 +7,7 @@ namespace System.Data.SQLiteCipher
     /// <summary>
     ///     Represents a SQLite error.
     /// </summary>
+    /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/database-errors">Database Errors</seealso>
     public class SqliteException : DbException
     {
         /// <summary>
@@ -36,14 +37,14 @@ namespace System.Data.SQLiteCipher
         ///     Gets the SQLite error code.
         /// </summary>
         /// <value>The SQLite error code.</value>
-        /// <seealso href="http://sqlite.org/rescode.html">SQLite Result Codes</seealso>
+        /// <seealso href="https://www.sqlite.org/rescode.html">SQLite Result Codes</seealso>
         public virtual int SqliteErrorCode { get; }
 
         /// <summary>
         ///     Gets the extended SQLite error code.
         /// </summary>
         /// <value>The SQLite error code.</value>
-        /// <seealso href="https://sqlite.org/rescode.html#extrc">SQLite Result Codes</seealso>
+        /// <seealso href="https://www.sqlite.org/rescode.html#extrc">SQLite Result Codes</seealso>
         public virtual int SqliteExtendedErrorCode { get; }
 
         /// <summary>
@@ -66,9 +67,7 @@ namespace System.Data.SQLiteCipher
             string message;
             int extendedErrorCode;
             if (db == null
-#if !NET40 && !NET45
                 || db.IsInvalid
-#endif
                 || rc != sqlite3_errcode(db))
             {
                 message = sqlite3_errstr(rc).utf8_to_string() + " " + Resources.DefaultNativeError;

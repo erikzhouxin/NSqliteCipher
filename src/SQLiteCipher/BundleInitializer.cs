@@ -1,6 +1,4 @@
-using System;
 using System.Reflection;
-
 using static SQLitePCL.raw;
 
 namespace System.Data.SQLiteCipher
@@ -12,27 +10,22 @@ namespace System.Data.SQLiteCipher
 
         public static void Initialize()
         {
+            Assembly assembly = null;
             try
             {
-#if NET40 || NET45
-                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlcipher());
-#else
-                SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlcipher());
-#endif
-                Assembly assembly = Assembly.Load(new AssemblyName("SQLitePCLRaw.batteries_v2"));
-                if (assembly != null)
-                {
-                    assembly.GetType("SQLitePCL.Batteries_V2").GetTypeInfo().GetDeclaredMethod("Init")
-                        .Invoke(null, null);
-                }
+                assembly = Assembly.Load(new AssemblyName("SQLitePCLRaw.batteries_v2"));
             }
             catch
             {
             }
 
-#if !NET40 && !NET45
-            if ((!AppContext.TryGetSwitch("Microsoft.EntityFrameworkCore.Issue19754", out var isEnabled) || !isEnabled)
-                && ApplicationDataHelper.CurrentApplicationData != null)
+            if (assembly != null)
+            {
+                assembly.GetType("SQLitePCL.Batteries_V2").GetTypeInfo().GetDeclaredMethod("Init")
+                    .Invoke(null, null);
+            }
+
+            if (ApplicationDataHelper.CurrentApplicationData != null)
             {
                 var rc = sqlite3_win32_set_directory(
                     SQLITE_WIN32_DATA_DIRECTORY_TYPE,
@@ -44,7 +37,6 @@ namespace System.Data.SQLiteCipher
                     ApplicationDataHelper.TemporaryFolderPath);
                 SqliteException.ThrowExceptionForRC(rc, db: null);
             }
-#endif
         }
     }
 }

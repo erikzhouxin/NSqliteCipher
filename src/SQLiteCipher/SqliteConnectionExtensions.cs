@@ -9,13 +9,11 @@ namespace System.Data.SQLiteCipher
             string commandText,
             params SqliteParameter[] parameters)
         {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                command.Parameters.AddRange(parameters);
+            using var command = connection.CreateCommand();
+            command.CommandText = commandText;
+            command.Parameters.AddRange(parameters);
 
-                return command.ExecuteNonQuery();
-            }
+            return command.ExecuteNonQuery();
         }
 
         public static T ExecuteScalar<T>(
@@ -29,13 +27,11 @@ namespace System.Data.SQLiteCipher
             string commandText,
             params SqliteParameter[] parameters)
         {
-            using (var command = connection.CreateCommand())
-            {
-                command.CommandText = commandText;
-                command.Parameters.AddRange(parameters);
+            using var command = connection.CreateCommand();
+            command.CommandText = commandText;
+            command.Parameters.AddRange(parameters);
 
-                return command.ExecuteScalar();
-            }
+            return command.ExecuteScalar();
         }
     }
 }
