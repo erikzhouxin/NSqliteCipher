@@ -16,6 +16,7 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Version>1.0.1</Version>
 		<EmbedAllSources>true</EmbedAllSources>
+		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net4'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
