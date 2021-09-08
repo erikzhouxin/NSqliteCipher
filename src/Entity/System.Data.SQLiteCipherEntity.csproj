@@ -1,0 +1,81 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;</TargetFrameworks>
+		<Description>SQLite数据库实体项目.Useful SQLite Database Entity Utilities Based On Microsoft.Data.Sqlite.</Description>
+		<AssemblyName>NSystem.Data.SQLiteCipherEntity</AssemblyName>
+		<RootNamespace>System.Data.SQLiteCipherEntity</RootNamespace>
+		<AssemblyTitle>NSystem.Data.SQLiteCipherEntity</AssemblyTitle>
+		<Authors>ErikZhouXin</Authors>
+		<SignAssembly>true</SignAssembly>
+		<LangVersion>latest</LangVersion>
+		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>2021.9.8</Version>
+		<FileVersion>2021.9.8.616</FileVersion>
+		<AssemblyVersion>2021.9.8.616</AssemblyVersion>
+		<EmbedAllSources>true</EmbedAllSources>
+		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.1'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NETStd</DefineConstants>
+		<DocumentationFile>bin\Debug\netstandard2.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Debug\netstandard2.1</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\Debug\netcoreapp3.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Debug\netcoreapp3.1</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NET50</DefineConstants>
+		<DocumentationFile>bin\Debug\net5.0\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Debug\net5.0</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.1'">
+		<DefineConstants>TRACE;NETFx;NETStd</DefineConstants>
+		<DocumentationFile>bin\Release\netstandard2.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Release\netstandard2.1</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
+		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\Release\netcoreapp3.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Release\netcoreapp3.1</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0'">
+		<DefineConstants>TRACE;NETFx;NET50</DefineConstants>
+		<DocumentationFile>bin\Release\net5.0\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<OutputPath>bin\Release\net5.0</OutputPath>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
+		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
+		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
+		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
+		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
+	</ItemGroup>
+	<ItemGroup>
+	  <ProjectReference Include="..\SQLiteCipher\System.Data.SQLiteCipher.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -16,9 +16,15 @@ namespace System.Data.SQLiteCipher.Builder
             ASSEMBLY_VERSION = string.Format("{0:yyyy.M.d}.{1}", DateTime.Now, (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays);
             var current = Directory.GetCurrentDirectory();
             Src = Path.GetFullPath(Path.Combine(current, "..", "..", "..", "..", "..", "src"));
-
-            var projFile = Path.Combine(Src, "SQLiteCipher", "System.Data.SQLiteCipher.csproj");
-            ReplaceVersion(projFile);
+            var projs = new string[]
+            {
+                Path.Combine(Src, "SQLiteCipher", "System.Data.SQLiteCipher.csproj"),
+                Path.Combine(Src, "Entity", "System.Data.SQLiteCipherEntity.csproj")
+            };
+            foreach (var proj in projs)
+            {
+                ReplaceVersion(proj);
+            }
         }
 
         private static void ReplaceVersion(string projFile)

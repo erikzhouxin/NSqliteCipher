@@ -22,62 +22,62 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
-		<DocumentationFile>bin\Debug\net40\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\net40\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\net40</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET45</DefineConstants>
-		<DocumentationFile>bin\Debug\net45\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\net45\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\net45</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETStd</DefineConstants>
-		<DocumentationFile>bin\Debug\netstandard2.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\netstandard2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netstandard2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp2.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Debug\netcoreapp2.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\netcoreapp2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netcoreapp2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Debug\netcoreapp3.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\netcoreapp3.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netcoreapp3.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NET50</DefineConstants>
-		<DocumentationFile>bin\Debug\net5.0\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\net5.0\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\net5.0</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
 		<DefineConstants>TRACE;NETFrame;NET40</DefineConstants>
-		<DocumentationFile>bin\Release\net40\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net40\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\net40</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
 		<DefineConstants>TRACE;NETFrame;NET45</DefineConstants>
-		<DocumentationFile>bin\Release\net45\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net45\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\net45</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.1'">
 		<DefineConstants>TRACE;NETFx;NETStd</DefineConstants>
-		<DocumentationFile>bin\Release\netstandard2.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\netstandard2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\netstandard2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp2.1'">
 		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Release\netcoreapp2.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\netcoreapp2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\netcoreapp2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
 		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Release\netcoreapp3.1\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\netcoreapp3.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\netcoreapp3.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0'">
 		<DefineConstants>TRACE;NETFx;NET50</DefineConstants>
-		<DocumentationFile>bin\Release\net5.0\System.Data.NSQLiteCipher.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net5.0\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\net5.0</OutputPath>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">

@@ -67,6 +67,9 @@
 		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
 		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
@@ -77,12 +80,16 @@
 		<PackageReference Include="MaterialDesignThemes" Version="3.2.0" />
 		<PackageReference Include="MaterialDesignColors" Version="1.2.7" />
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.9" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9" />
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
 		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\Entity\System.Data.SQLiteCipherEntity.csproj" />
 		<ProjectReference Include="..\..\src\SQLiteCipher\System.Data.SQLiteCipher.csproj" />
 	</ItemGroup>
 </Project>
