@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "System.Data.SQLiteCipherUT"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLitePCL.Raw.Core", "src\SQLitePCL\Raw.Core\SQLitePCL.Raw.Core.csproj", "{248F1D3F-A707-4334-AAA6-BC49BC8D1E07}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLitePCL.Raw.Liber", "src\SQLitePCL\lib\SQLitePCL.Raw.Liber.csproj", "{8124C1F2-6474-4A5F-BD5D-F2868CA0A640}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SQLitePCL.Raw.Builder", "src\SQLitePCL\Builder\SQLitePCL.Raw.Builder.csproj", "{12A5BB89-5960-4881-8A14-E595F1D98F1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.SQLiteCipher.Builder", "demo\builder\System.Data.SQLiteCipher.Builder.csproj", "{A3542865-F0CC-4858-9ABA-C153036B655C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -37,14 +37,14 @@ Global
 		{248F1D3F-A707-4334-AAA6-BC49BC8D1E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{248F1D3F-A707-4334-AAA6-BC49BC8D1E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{248F1D3F-A707-4334-AAA6-BC49BC8D1E07}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8124C1F2-6474-4A5F-BD5D-F2868CA0A640}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8124C1F2-6474-4A5F-BD5D-F2868CA0A640}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8124C1F2-6474-4A5F-BD5D-F2868CA0A640}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8124C1F2-6474-4A5F-BD5D-F2868CA0A640}.Release|Any CPU.Build.0 = Release|Any CPU
 		{12A5BB89-5960-4881-8A14-E595F1D98F1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{12A5BB89-5960-4881-8A14-E595F1D98F1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{12A5BB89-5960-4881-8A14-E595F1D98F1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{12A5BB89-5960-4881-8A14-E595F1D98F1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3542865-F0CC-4858-9ABA-C153036B655C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3542865-F0CC-4858-9ABA-C153036B655C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3542865-F0CC-4858-9ABA-C153036B655C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3542865-F0CC-4858-9ABA-C153036B655C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

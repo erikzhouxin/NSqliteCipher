@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
-namespace SQLitePCL.Builder
+namespace SQLitePCL.Raw.Builder
 {
     static class Program
     {
@@ -71,17 +71,6 @@ namespace SQLitePCL.Builder
             var ver = props.Elements(XName.Get(p)).First();
             return ver.Value;
         }
-        public static void gen_provider(string dir_basename, string dllimport_name, string provider_basename, string conv, string kind, string tfm, string ftr_key, string dir_providers)
-        {
-            var dir_name = $"SQLitePCLRaw.provider.{dir_basename}";
-            var cs_name = $"provider_{provider_basename.ToLower()}.cs";
-            var cs_path = Path.Combine(Src, "src", dir_name, "Generated", cs_name);
-            var dllimport_name_arg = kind == "dynamic" ? "" : $"-p:NAME_FOR_DLLIMPORT={dllimport_name}";
-            // TODO want to change this to the local tool
-            var args = $"-out {cs_path} -p:NAME={provider_basename} -p:CONV={conv} -p:KIND={kind} -p:TFM={tfm} -p:FEATURE_KEY={ftr_key} {dllimport_name_arg} provider.tt";
-            Exec(@"C:\Program Files\Microsoft Visual Studio 2019\Common7\IDE\TextTransform.exe", args, dir_providers);
-        }
-
         public static void Exec(string fileName, string args, string startDir)
         {
             var wd = System.IO.Path.GetFullPath(startDir);
@@ -127,17 +116,11 @@ namespace SQLitePCL.Builder
         }
         #endregion
         #region // Version
-        public const int MAJOR_VERSION = 2021;
-        public const int MINOR_VERSION = 9;
-        public const int PATCH_VERSION = 8;
-        public static int Build { get; } = (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays;
-
-        public static string NUSPEC_VERSION { get; } = string.Format("{0}.{1}.{2}", MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION);
-        public static string ASSEMBLY_VERSION { get; } = string.Format("{0}.{1}.{2}.{3}", MAJOR_VERSION, MINOR_VERSION, PATCH_VERSION, Build);
-
-        const string COPYRIGHT = "Copyright 2014-2021 SourceGear, LLC";
-        const string AUTHORS = "Eric Sink";
-        const string SUMMARY = "SQLitePCLRaw is a Portable Class Library (PCL) for low-level (raw) access to SQLite";
+        static string NUSPEC_VERSION { get; } = string.Format("{0:yyyy.M.d}", DateTime.Now);
+        static string ASSEMBLY_VERSION { get; } = string.Format("{0:yyyy.M.d}.{1}", DateTime.Now, (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays);
+        static string COPYRIGHT { get; } = $"Copyright 2020-{DateTime.Now.Year}";
+        static string AUTHORS { get; } = "ErikZhouXin EricSink";
+        static string SUMMARY { get; } = "SQLitePCLRaw is a Portable Class Library (PCL) for low-level (raw) access to SQLite";
 
         private static void gen_directory_build_props(string root, string nupkgs_dir_name)
         {
@@ -170,7 +153,7 @@ namespace SQLitePCL.Builder
                 f.WriteElementString("PackageOutputPath", string.Format("$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), '{0}'))", nupkgs_dir_name));
 
                 f.WriteElementString("cb_bin_path", "$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), 'Beans'))");
-                f.WriteElementString("src_path", "$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), 'src'))");
+                f.WriteElementString("src_path", "$([System.IO.Path]::Combine($(MSBuildThisFileDirectory), '..', 'src'))");
 
                 f.WriteEndElement(); // PropertyGroup
                 f.WriteEndElement(); // project
