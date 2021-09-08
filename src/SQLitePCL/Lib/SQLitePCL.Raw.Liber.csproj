@@ -1,0 +1,10 @@
+﻿<!--Automatically generated-->
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40;net45;</TargetFrameworks>
+    <NoBuild>true</NoBuild>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecFile>NSQLitePCL.Raw.Liber.nuspec</NuspecFile>
+    <NuspecProperties>version=$(version);src_path=$(src_path);cb_bin_path=$(cb_bin_path);authors=$(Authors);copyright=$(Copyright);summary=$(Description)</NuspecProperties>
+  </PropertyGroup>
+</Project>

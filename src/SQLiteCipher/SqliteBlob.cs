@@ -178,11 +178,7 @@ namespace System.Data.SQLiteCipher
             {
                 count = (int)(Length - position);
             }
-#if NET40 || NET45
-            var rc = sqlite3_blob_read(_blob, buffer.AsSpan(offset, count), count, (int)position);
-#else
             var rc = sqlite3_blob_read(_blob, buffer.AsSpan(offset, count), (int)position);
-#endif
             SqliteException.ThrowExceptionForRC(rc, _db);
             _position += count;
             return count;
@@ -238,11 +234,7 @@ namespace System.Data.SQLiteCipher
             {
                 throw new NotSupportedException(Resources.ResizeNotSupported);
             }
-#if NET40 || NET45
-            var rc = sqlite3_blob_write(_blob, buffer.AsSpan(offset, count), count, (int)position);
-#else
             var rc = sqlite3_blob_write(_blob, buffer.AsSpan(offset, count), (int)position);
-#endif
             SqliteException.ThrowExceptionForRC(rc, _db);
             _position += count;
         }

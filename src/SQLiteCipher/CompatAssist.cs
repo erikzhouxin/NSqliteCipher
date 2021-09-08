@@ -45,14 +45,6 @@ namespace System.Data.SQLiteCipher
 #endif
     }
 #if NET40
-    /// <summary>
-    /// 委托
-    /// </summary>
-    /// <param name="user_data"></param>
-    /// <param name="s1"></param>
-    /// <param name="s2"></param>
-    /// <returns></returns>
-    public delegate int strdelegate_collation(object user_data, string s1, string s2);
     class WeakReference<T> : WeakReference
     {
         public WeakReference(T target) : base(target)
@@ -403,15 +395,5 @@ namespace System.Data.SQLiteCipher
             return innerType.GetMethod(name);
         }
     }
-#endif
-#if NET45
-        /// <summary>
-        /// 委托
-        /// </summary>
-        /// <param name="user_data"></param>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
-        public delegate int strdelegate_collation(object user_data, string s1, string s2);
 #endif
 }

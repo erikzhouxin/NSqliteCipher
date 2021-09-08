@@ -58,7 +58,6 @@
 		<Reference Include="ReachFramework" />
 		<Reference Include="PresentationCore" />
 		<Reference Include="PresentationFramework" />
-		<PackageReference Include="SQLitePCLRaw.lib.sqlcipher.windows" Version="1.1.14" />
 		<Reference Include="System.Printing" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 		<Reference Include="WindowsBase" />
@@ -71,7 +70,6 @@
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
 		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlcipher" Version="2.0.4" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
@@ -82,7 +80,6 @@
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
 		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.0" />
-		<PackageReference Include="SQLitePCLRaw.lib.e_sqlcipher" Version="2.0.4" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup>

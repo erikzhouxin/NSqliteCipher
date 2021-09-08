@@ -525,7 +525,44 @@ namespace System.Data.SQLiteCipher
                 : _record == null
                     ? throw new InvalidOperationException(Resources.NoData)
                     : _record.GetChars(ordinal, dataOffset, buffer, bufferOffset, length);
-
+#if NET40
+        /// <summary>
+        ///     Retrieves data as a Stream. If the reader includes rowid (or any of its aliases), a
+        ///     <see cref="SqliteBlob" /> is returned. Otherwise, the all of the data is read into memory and a
+        ///     <see cref="MemoryStream" /> is returned.
+        /// </summary>
+        /// <param name="ordinal">The zero-based column ordinal.</param>
+        /// <returns>The returned object.</returns>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/blob-io">BLOB I/O</seealso>
+        public Stream GetStream(int ordinal)
+            => _closed
+                ? throw new InvalidOperationException(Resources.DataReaderClosed(nameof(GetStream)))
+                : _record == null
+                    ? throw new InvalidOperationException(Resources.NoData)
+                    : _record.GetStream(ordinal);
+        /// <summary>
+        ///     Retrieves data as a <see cref="TextReader" />.
+        /// </summary>
+        /// <param name="ordinal">The zero-based column ordinal.</param>
+        /// <returns>The returned object.</returns>
+        public TextReader GetTextReader(int ordinal)
+            => IsDBNull(ordinal)
+                ? (TextReader)new StringReader(string.Empty)
+                : new StreamReader(GetStream(ordinal), Encoding.UTF8);
+        /// <summary>
+        ///     Gets the value of the specified column.
+        /// </summary>
+        /// <typeparam name="T">The type of the value.</typeparam>
+        /// <param name="ordinal">The zero-based column ordinal.</param>
+        /// <returns>The value of the column.</returns>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/types">Data Types</seealso>
+        public T GetFieldValue<T>(int ordinal)
+            => _closed
+                ? throw new InvalidOperationException(Resources.DataReaderClosed(nameof(GetFieldValue)))
+                : _record == null
+                    ? throw new InvalidOperationException(Resources.NoData)
+                    : _record.GetFieldValue<T>(ordinal);
+#else
         /// <summary>
         ///     Retrieves data as a Stream. If the reader includes rowid (or any of its aliases), a
         ///     <see cref="SqliteBlob" /> is returned. Otherwise, the all of the data is read into memory and a
@@ -540,7 +577,6 @@ namespace System.Data.SQLiteCipher
                 : _record == null
                     ? throw new InvalidOperationException(Resources.NoData)
                     : _record.GetStream(ordinal);
-
         /// <summary>
         ///     Retrieves data as a <see cref="TextReader" />.
         /// </summary>
@@ -564,7 +600,7 @@ namespace System.Data.SQLiteCipher
                 : _record == null
                     ? throw new InvalidOperationException(Resources.NoData)
                     : _record.GetFieldValue<T>(ordinal);
-
+#endif
         /// <summary>
         ///     Gets the value of the specified column.
         /// </summary>

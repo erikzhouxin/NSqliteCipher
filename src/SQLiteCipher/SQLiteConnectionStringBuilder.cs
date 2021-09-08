@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 
 namespace System.Data.SQLiteCipher
 {
@@ -31,9 +32,13 @@ namespace System.Data.SQLiteCipher
         private const string RecursiveTriggersKeyword = "Recursive Triggers";
         private const string VersionKeyword = "Version";
 
+#if NET40
+        private static readonly List<String> _validKeywords;
+        private static readonly Dictionary<string, SqliteConnKeywords> _keywords;
+#else
         private static readonly IReadOnlyList<string> _validKeywords;
         private static readonly IReadOnlyDictionary<string, SqliteConnKeywords> _keywords;
-
+#endif
 
         static SqliteConnectionStringBuilder()
         {
@@ -54,8 +59,11 @@ namespace System.Data.SQLiteCipher
             validKeywords[(int)SqliteConnKeywords.Version] = VersionKeyword;
             validKeywords[(int)SqliteConnKeywords.Provider] = ProviderKeyword;
             validKeywords[(int)SqliteConnKeywords.Driver] = DriverKeyword;
+#if NET40
+            _validKeywords = validKeywords.ToList();
+#else
             _validKeywords = validKeywords;
-
+#endif
             _keywords = new Dictionary<string, SqliteConnKeywords>(8, StringComparer.OrdinalIgnoreCase)
             {
                 [DataSourceKeyword] = SqliteConnKeywords.DataSource,
@@ -180,7 +188,7 @@ namespace System.Data.SQLiteCipher
         /// <summary>
         /// 获取连接字符串中的关键词列表
         /// </summary>
-        public override ICollection Keys => new ReadOnlyCollection<string>((string[])_validKeywords);
+        public override ICollection Keys => new ReadOnlyCollection<string>(_validKeywords.ToList());
 
         /// <summary>
         /// 获取连接字符串中的值列表

@@ -388,6 +388,39 @@ namespace System.Data.SQLiteCipher
         public new virtual Task<SqliteDataReader> ExecuteReaderAsync(CommandBehavior behavior)
             => ExecuteReaderAsync(behavior, CancellationToken.None);
 
+#if NET40
+        /// <summary>
+        ///     Executes the <see cref="CommandText" /> asynchronously against the database and returns a data reader.
+        /// </summary>
+        /// <param name="behavior">A description of query's results and its effect on the database.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/async">Async Limitations</seealso>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/batching">Batching</seealso>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/database-errors">Database Errors</seealso>
+        public new virtual Task<SqliteDataReader> ExecuteReaderAsync(
+            CommandBehavior behavior,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return Task.Factory.StartNew(() => ExecuteReader(behavior), cancellationToken);
+        }
+
+        /// <summary>
+        ///     Executes the <see cref="CommandText" /> asynchronously against the database and returns a data reader.
+        /// </summary>
+        /// <param name="behavior">A description of query's results and its effect on the database.</param>
+        /// <param name="cancellationToken">The token to monitor for cancellation requests.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/async">Async Limitations</seealso>
+        protected DbDataReader ExecuteDbDataReaderAsync(
+            CommandBehavior behavior,
+            CancellationToken cancellationToken)
+        {
+            var res = ExecuteReaderAsync(behavior, cancellationToken);
+            return res.Result;
+        }
+#else
         /// <summary>
         ///     Executes the <see cref="CommandText" /> asynchronously against the database and returns a data reader.
         /// </summary>
@@ -417,7 +450,7 @@ namespace System.Data.SQLiteCipher
             CommandBehavior behavior,
             CancellationToken cancellationToken)
             => await ExecuteReaderAsync(behavior, cancellationToken).ConfigureAwait(false);
-
+#endif
         /// <summary>
         ///     Executes the <see cref="CommandText" /> against the database.
         /// </summary>

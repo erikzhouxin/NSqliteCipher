@@ -16,6 +16,64 @@ namespace System.Data.SQLiteCipher
     /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/async">Async Limitations</seealso>
     public partial class SqliteConnection : DbConnection
     {
+        #region // ÄÚ²¿Àà
+        internal struct collactionsValue
+        {
+            public collactionsValue(object state, strdelegate_collation collation)
+            {
+                this.state = state;
+                this.collation = collation;
+            }
+            public object state;
+            public strdelegate_collation collation;
+        }
+        internal struct functionsKey
+        {
+            public functionsKey(string name, int arity)
+            {
+                this.name = name;
+                this.arity = arity;
+            }
+            public string name;
+            public int arity;
+        }
+        internal struct functionsValue
+        {
+            public functionsValue(int flags, object state, delegate_function_scalar func)
+            {
+                this.flags = flags;
+                this.state = state;
+                this.func = func;
+            }
+            public int flags;
+            public object state;
+            public delegate_function_scalar func;
+        }
+        internal struct aggregatesValue
+        {
+            public aggregatesValue(int flags, object state, delegate_function_aggregate_step func_step, delegate_function_aggregate_final func_final)
+            {
+                this.flags = flags;
+                this.state = state;
+                this.func_final = func_final;
+                this.func_step = func_step;
+            }
+            public int flags;
+            public object state;
+            public delegate_function_aggregate_step func_step;
+            public delegate_function_aggregate_final func_final;
+        }
+        internal struct extensionsSet
+        {
+            public extensionsSet(string file, string proc)
+            {
+                this.file = file;
+                this.proc = proc;
+            }
+            public string file;
+            public string proc;
+        }
+        #endregion
         static SqliteConnection() => BundleInitializer.Initialize();
 
         internal const string MainDatabaseName = "main";
@@ -24,17 +82,15 @@ namespace System.Data.SQLiteCipher
 
         private readonly List<WeakReference<SqliteCommand>> _commands = new List<WeakReference<SqliteCommand>>();
 
-        private Dictionary<string, (object state, strdelegate_collation collation)> _collations;
+        private Dictionary<string, collactionsValue> _collations;
 
-        private Dictionary<(string name, int arity), (int flags, object state, delegate_function_scalar func)> _functions;
+        private Dictionary<functionsKey, functionsValue> _functions;
 
-        private Dictionary<(string name, int arity), (int flags, object state, delegate_function_aggregate_step func_step,
-            delegate_function_aggregate_final func_final)> _aggregates;
+        private Dictionary<functionsKey, aggregatesValue> _aggregates;
 
-        private HashSet<(string file, string proc)> _extensions;
+        private HashSet<extensionsSet> _extensions;
 
         private string _connectionString = string.Empty;
-        private ConnectionState _state;
         private sqlite3 _db;
         private bool _extensionsEnabled;
 
@@ -126,6 +182,7 @@ namespace System.Data.SQLiteCipher
         public override string ServerVersion
             => sqlite3_libversion().utf8_to_string();
 
+        private ConnectionState _state;
         /// <summary>
         ///     Gets the current state of the connection.
         /// </summary>
@@ -246,29 +303,38 @@ namespace System.Data.SQLiteCipher
 
                     // NB: SQLite doesn't support parameters in PRAGMA statements, so we escape the value using the
                     //     quote function before concatenating.
-                    var quotedPassword = this.ExecuteScalar<string>(
-                        "SELECT quote($password);",
-                        new SqliteParameter("$password", ConnectionOptions.Password));
-                    this.ExecuteNonQuery("PRAGMA key = " + quotedPassword + ";");
-
-                    if (SQLitePCLExtensions.EncryptionSupported() != false)
-                    {
-                        // NB: Forces decryption. Throws when the key is incorrect.
-                        this.ExecuteNonQuery("SELECT COUNT(*) FROM sqlite_master;");
-                    }
+                    var quotedPassword = this.ExecuteScalar<string>("SELECT quote($password);", new SqliteParameter("$password", ConnectionOptions.Password));
+                    this.ExecuteNonQuery($"PRAGMA key={quotedPassword};");
+                    //this.ExecuteNonQuery("PRAGMA synchronous = NORMAL;");
+                    //this.ExecuteNonQuery("PRAGMA SQLITE_THREADSAFE = 1;");
+                    //if (SQLitePCLExtensions.EncryptionSupported() != false)
+                    //{
+                    //    // NB: Forces decryption. Throws when the key is incorrect.
+                    //    this.ExecuteNonQuery("SELECT COUNT(*) FROM sqlite_master;");
+                    //}
                 }
 
                 if (ConnectionOptions.ForeignKeys.HasValue)
                 {
-                    this.ExecuteNonQuery(
-                        "PRAGMA foreign_keys = " + (ConnectionOptions.ForeignKeys.Value ? "1" : "0") + ";");
+                    this.ExecuteNonQuery($"PRAGMA foreign_keys={(ConnectionOptions.ForeignKeys.Value ? "1" : "0")};");
                 }
 
                 if (ConnectionOptions.RecursiveTriggers)
                 {
-                    this.ExecuteNonQuery("PRAGMA recursive_triggers = 1;");
+                    this.ExecuteNonQuery("PRAGMA recursive_triggers=1;");
                 }
-
+                switch (ConnectionOptions.Version)
+                {
+                    case SqliteVersion.V4:
+                        this.ExecuteNonQuery("PRAGMA cipher_compatibility=4;");
+                        this.ExecuteNonQuery("PRAGMA version=4;");
+                        break;
+                    case SqliteVersion.V3:
+                    default:
+                        this.ExecuteNonQuery("PRAGMA cipher_compatibility=3;");
+                        this.ExecuteNonQuery("PRAGMA version=3;");
+                        break;
+                }
                 if (_collations != null)
                 {
                     foreach (var item in _collations)
@@ -298,8 +364,7 @@ namespace System.Data.SQLiteCipher
                 }
 
                 var extensionsEnabledForLoad = false;
-                if (_extensions != null
-                    && _extensions.Count != 0)
+                if (_extensions != null && _extensions.Count != 0)
                 {
                     rc = sqlite3_enable_load_extension(_db, 1);
                     SqliteException.ThrowExceptionForRC(rc, _db);
@@ -373,6 +438,7 @@ namespace System.Data.SQLiteCipher
         {
             try
             {
+                var quotedPassword = this.ExecuteScalar<string>("SELECT quote($password);", new SqliteParameter("$password", newPass));
                 this.ExecuteNonQuery($"PRAGMA rekey='{newPass}';");
                 return true;
             }
@@ -445,8 +511,7 @@ namespace System.Data.SQLiteCipher
         /// <param name="comparison">Method that compares two strings.</param>
         /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/collation">Collation</seealso>
         public virtual void CreateCollation(string name, Comparison<string> comparison)
-            => CreateCollation(
-                name, null, comparison != null ? (_, s1, s2) => comparison(s1, s2) : (Func<object, string, string, int>)null);
+            => CreateCollation(name, null, comparison != null ? (_, s1, s2) => comparison(s1, s2) : (Func<object, string, string, int>)null);
 
         /// <summary>
         ///     Create custom collation.
@@ -471,8 +536,8 @@ namespace System.Data.SQLiteCipher
                 SqliteException.ThrowExceptionForRC(rc, _db);
             }
 
-            _collations ??= new Dictionary<string, (object, strdelegate_collation)>(StringComparer.OrdinalIgnoreCase);
-            _collations[name] = (state, collation);
+            _collations ??= new Dictionary<string, collactionsValue>(StringComparer.OrdinalIgnoreCase);
+            _collations[name] = new collactionsValue(state, collation);
         }
 
         /// <summary>
@@ -610,8 +675,8 @@ namespace System.Data.SQLiteCipher
                 }
             }
 
-            _extensions ??= new HashSet<(string, string)>();
-            _extensions.Add((file, proc));
+            _extensions ??= new HashSet<extensionsSet>();
+            _extensions.Add(new extensionsSet(file, proc));
         }
 
         private void LoadExtensionCore(string file, string proc)
@@ -619,16 +684,11 @@ namespace System.Data.SQLiteCipher
             if (proc == null)
             {
                 // NB: SQLitePCL.raw doesn't expose sqlite3_load_extension()
-                this.ExecuteNonQuery(
-                    "SELECT load_extension($file);",
-                    new SqliteParameter("$file", file));
+                this.ExecuteNonQuery("SELECT load_extension($file);", new SqliteParameter("$file", file));
             }
             else
             {
-                this.ExecuteNonQuery(
-                    "SELECT load_extension($file, $proc);",
-                    new SqliteParameter("$file", file),
-                    new SqliteParameter("$proc", proc));
+                this.ExecuteNonQuery("SELECT load_extension($file, $proc);", new SqliteParameter("$file", file), new SqliteParameter("$proc", proc));
             }
         }
 
@@ -742,8 +802,8 @@ namespace System.Data.SQLiteCipher
                 SqliteException.ThrowExceptionForRC(rc, _db);
             }
 
-            _functions ??= new Dictionary<(string, int), (int, object, delegate_function_scalar)>(FunctionsKeyComparer.Instance);
-            _functions[(name, arity)] = (flags, state, func);
+            _functions ??= new Dictionary<functionsKey, functionsValue>(FunctionsKeyComparer.Instance);
+            _functions[new functionsKey(name, arity)] = new functionsValue(flags, state, func);
         }
 
         private void CreateAggregateCore<TAccumulate, TResult>(
@@ -837,10 +897,9 @@ namespace System.Data.SQLiteCipher
                 SqliteException.ThrowExceptionForRC(rc, _db);
             }
 
-            _aggregates ??=
-                new Dictionary<(string, int), (int, object, delegate_function_aggregate_step, delegate_function_aggregate_final)>(
+            _aggregates ??= new Dictionary<functionsKey, aggregatesValue>(
                     FunctionsKeyComparer.Instance);
-            _aggregates[(name, arity)] = (flags, state, func_step, func_final);
+            _aggregates[new functionsKey(name, arity)] = new aggregatesValue(flags, state, func_step, func_final);
         }
 
         private static Func<TState, SqliteValueReader, TResult> IfNotNull<TState, TResult>(
@@ -865,15 +924,15 @@ namespace System.Data.SQLiteCipher
             public Exception Exception { get; set; }
         }
 
-        private sealed class FunctionsKeyComparer : IEqualityComparer<(string name, int arity)>
+        private sealed class FunctionsKeyComparer : IEqualityComparer<functionsKey>
         {
             public static readonly FunctionsKeyComparer Instance = new FunctionsKeyComparer();
 
-            public bool Equals((string name, int arity) x, (string name, int arity) y)
+            public bool Equals(functionsKey x, functionsKey y)
                 => StringComparer.OrdinalIgnoreCase.Equals(x.name, y.name)
                     && x.arity == y.arity;
 
-            public int GetHashCode((string name, int arity) obj)
+            public int GetHashCode(functionsKey obj)
             {
                 var nameHashCode = StringComparer.OrdinalIgnoreCase.GetHashCode(obj.name);
                 var arityHashCode = obj.arity.GetHashCode();

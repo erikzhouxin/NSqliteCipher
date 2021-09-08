@@ -16,6 +16,13 @@ namespace TestWPFUI.SQLiteCipher
     public partial class App : Application
     {
         /// <summary>
+        /// 构造
+        /// </summary>
+        public App()
+        {
+            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlcipher());
+        }
+        /// <summary>
         /// 退出时
         /// </summary>
         /// <param name="e"></param>

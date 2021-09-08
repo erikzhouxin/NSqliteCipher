@@ -14,6 +14,12 @@ namespace System.Data.SQLiteCipher
     /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/types">Data Types</seealso>
     public class SqliteParameter : DbParameter
     {
+#if NET40 || NET45
+        /// <summary>
+        /// Դ�汾
+        /// </summary>
+        public override DataRowVersion SourceVersion { get; set; }
+#endif
         private string _parameterName = string.Empty;
         private object _value;
         private int? _size;

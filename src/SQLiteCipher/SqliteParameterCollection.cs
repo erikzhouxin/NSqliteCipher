@@ -13,6 +13,20 @@ namespace System.Data.SQLiteCipher
     /// <seealso href="https://docs.microsoft.com/dotnet/standard/data/sqlite/parameters">Parameters</seealso>
     public class SqliteParameterCollection : DbParameterCollection
     {
+#if NET40 || NET45
+        /// <summary>
+        /// 是否异步
+        /// </summary>
+        public override bool IsSynchronized { get;  }
+        /// <summary>
+        /// 是否只读
+        /// </summary>
+        public override bool IsReadOnly { get; }
+        /// <summary>
+        /// 修复的长度
+        /// </summary>
+        public override bool IsFixedSize { get; }
+#endif
         private readonly List<SqliteParameter> _parameters = new List<SqliteParameter>();
 
         /// <summary>
@@ -35,7 +49,6 @@ namespace System.Data.SQLiteCipher
         /// <value>The object used to synchronize access to the collection.</value>
         public override object SyncRoot
             => ((ICollection)_parameters).SyncRoot;
-
         /// <summary>
         ///     Gets or sets the parameter at the specified index.
         /// </summary>
