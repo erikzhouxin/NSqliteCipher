@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using TestWPFUI.SQLiteCipher.Models;
 using TestWPFUI.SQLiteCipher.ViewModels;
+using SQLitePCL.Raw.Core;
 
 namespace TestWPFUI.SQLiteCipher
 {
@@ -20,7 +21,6 @@ namespace TestWPFUI.SQLiteCipher
         /// </summary>
         public App()
         {
-            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlcipher());
         }
         /// <summary>
         /// 退出时

@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SQLitePCL
+namespace SQLitePCL.Raw.Core
 {
+    /// <summary>
+    /// 兼容助手
+    /// </summary>
     internal static class CompatAssist
     {
 #if NET45 || NET40

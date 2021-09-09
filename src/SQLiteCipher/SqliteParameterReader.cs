@@ -1,5 +1,5 @@
-using SQLitePCL;
-using static SQLitePCL.raw;
+using SQLitePCL.Raw.Core;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace System.Data.SQLiteCipher
 {

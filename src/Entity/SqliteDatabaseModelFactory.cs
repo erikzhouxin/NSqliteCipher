@@ -19,7 +19,7 @@ using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 using Microsoft.EntityFrameworkCore.Sqlite.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Utilities;
-using static SQLitePCL.raw;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace Microsoft.EntityFrameworkCore.Sqlite.Scaffolding.Internal
 {

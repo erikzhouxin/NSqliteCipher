@@ -4,8 +4,8 @@ using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
-using SQLitePCL;
-using static SQLitePCL.raw;
+using SQLitePCL.Raw.Core;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace System.Data.SQLiteCipher
 {

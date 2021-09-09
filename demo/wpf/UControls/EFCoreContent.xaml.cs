@@ -1,4 +1,4 @@
-using System.Data.SQLiteCipher;
+﻿using System.Data.SQLiteCipher;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -21,13 +21,14 @@ using System.Data;
 using System.Data.Dabber;
 using CenIdea.Qualimetry.DbExcel;
 using System.Windows.Controls.Primitives;
+using TestWPFUI.SQLiteCipher.Repository;
 
 namespace TestWPFUI.SQLiteCipher.UControls
 {
     /// <summary>
     /// SQLiteContent.xaml 的交互逻辑
     /// </summary>
-    public partial class SQLiteContent : BindableUserControl, INotifyPropertyChanged
+    public partial class EFCoreContent : BindableUserControl, INotifyPropertyChanged
     {
         /// <summary>
         /// 主表
@@ -44,12 +45,12 @@ namespace TestWPFUI.SQLiteCipher.UControls
         /// <summary>
         /// 默认构造
         /// </summary>
-        public SQLiteContent() : this(MainViewModel.DefaultConfig) { }
+        public EFCoreContent() : this(MainViewModel.DefaultConfig) { }
         /// <summary>
         /// 有参构造
         /// </summary>
         /// <param name="config"></param>
-        public SQLiteContent(DbConnectionConfig config)
+        public EFCoreContent(DbConnectionConfig config)
         {
             Config = config;
             InitializeComponent();
@@ -63,19 +64,15 @@ namespace TestWPFUI.SQLiteCipher.UControls
             {
                 try
                 {
-                    using (var conn = new SqliteConnection(Config.ConnString))
+                    using(var context = new LocalDatabaseContext(Config.ConnString))
                     {
-                        conn.Open();
-                        using (var cmd = conn.CreateCommand())
+                        var count = context.LocalTest.Count();
+                        context.LocalTest.Add(new LocalTestEntity
                         {
-                            cmd.CommandText = "CREATE TABLE IF NOT EXISTS [Test](ID TEXT NOT NULL,Name TEXT NOT NULL)";
-                            cmd.ExecuteNonQuery();
-                            cmd.CommandText = "INSERT INTO [Test]([ID],[Name]) VALUES(@ID,@Name)";
-                            cmd.Parameters.Clear();
-                            cmd.Parameters.AddWithValue("@ID", DateTime.Now.Ticks);
-                            cmd.Parameters.AddWithValue("@Name", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffff"));
-                            cmd.ExecuteNonQuery();
-                        }
+                            ID = DateTime.Now.Ticks,
+                            Name = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fffffff")
+                        });
+                        context.SaveChanges();
                     }
                 }
                 catch (Exception ex)
@@ -445,7 +442,7 @@ namespace TestWPFUI.SQLiteCipher.UControls
                 }
                 catch (Exception ex)
                 {
-                    if(trans != null) { trans.Rollback(); }
+                    if (trans != null) { trans.Rollback(); }
                     MessageBox.Show($"导入失败:{ex.Message}\r\n{ex.StackTrace}");
                 }
             }

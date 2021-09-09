@@ -1,7 +1,7 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using static SQLitePCL.raw;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace System.Data.SQLiteCipher
 {

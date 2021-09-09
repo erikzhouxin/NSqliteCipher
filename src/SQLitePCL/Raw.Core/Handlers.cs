@@ -2,7 +2,7 @@
 using System.Collections.Concurrent;
 using System.Runtime.InteropServices;
 
-namespace SQLitePCL
+namespace SQLitePCL.Raw.Core
 {
 
     public class sqlite3_backup : SafeHandle
@@ -22,14 +22,14 @@ namespace SQLitePCL
 
         protected override bool ReleaseHandle()
         {
-            int rc = raw.internal_sqlite3_backup_finish(handle);
+            int rc = RawCore.internal_sqlite3_backup_finish(handle);
             // TODO check rc?
             return true;
         }
 
         public int manual_close()
         {
-            int rc = raw.internal_sqlite3_backup_finish(handle);
+            int rc = RawCore.internal_sqlite3_backup_finish(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;
@@ -123,14 +123,14 @@ namespace SQLitePCL
 
         protected override bool ReleaseHandle()
         {
-            int rc = raw.internal_sqlite3_blob_close(handle);
+            int rc = RawCore.internal_sqlite3_blob_close(handle);
             // TODO check rc?
             return true;
         }
 
         public int manual_close()
         {
-            int rc = raw.internal_sqlite3_blob_close(handle);
+            int rc = RawCore.internal_sqlite3_blob_close(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;
@@ -155,13 +155,13 @@ namespace SQLitePCL
 
         protected override bool ReleaseHandle()
         {
-            raw.internal_sqlite3_snapshot_free(handle);
+            RawCore.internal_sqlite3_snapshot_free(handle);
             return true;
         }
 
         public void manual_close()
         {
-            raw.internal_sqlite3_snapshot_free(handle);
+            RawCore.internal_sqlite3_snapshot_free(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;
@@ -189,7 +189,7 @@ namespace SQLitePCL
 
         protected override bool ReleaseHandle()
         {
-            int rc = raw.internal_sqlite3_finalize(handle);
+            int rc = RawCore.internal_sqlite3_finalize(handle);
             // TODO check rc?
             _db.remove_stmt(this);
             return true;
@@ -197,7 +197,7 @@ namespace SQLitePCL
 
         public int manual_close()
         {
-            int rc = raw.internal_sqlite3_finalize(handle);
+            int rc = RawCore.internal_sqlite3_finalize(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;
@@ -234,7 +234,7 @@ namespace SQLitePCL
 
         protected override bool ReleaseHandle()
         {
-            int rc = raw.internal_sqlite3_close_v2(handle);
+            int rc = RawCore.internal_sqlite3_close_v2(handle);
             // TODO check rc?
             dispose_extra();
             return true;
@@ -242,7 +242,7 @@ namespace SQLitePCL
 
         public int manual_close_v2()
         {
-            int rc = raw.internal_sqlite3_close_v2(handle);
+            int rc = RawCore.internal_sqlite3_close_v2(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;
@@ -252,7 +252,7 @@ namespace SQLitePCL
 
         public int manual_close()
         {
-            int rc = raw.internal_sqlite3_close(handle);
+            int rc = RawCore.internal_sqlite3_close(handle);
             // TODO review.  should handle always be nulled here?
             // TODO maybe called SetHandleAsInvalid instead?
             handle = IntPtr.Zero;

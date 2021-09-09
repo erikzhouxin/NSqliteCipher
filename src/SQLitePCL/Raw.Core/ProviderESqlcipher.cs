@@ -4,11 +4,14 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 
-namespace SQLitePCL
+namespace SQLitePCL.Raw.Core
 {
 #if NET40
+    /// <summary>
+    /// 
+    /// </summary>
     [Preserve(AllMembers = true)]
-    public sealed class SQLite3Provider_e_sqlcipher : ISQLite3Provider
+    public sealed class ProviderESqlcipher : ISQLite3Provider
     {
 		const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 
@@ -22,17 +25,17 @@ namespace SQLitePCL
             return 0 == NativeMethods.sqlite3_strnicmp(p, q, len);
         }
 
-        hook_handles get_hooks(sqlite3 db)
+        HookHandles get_hooks(sqlite3 db)
         {
-			return db.GetOrCreateExtra<hook_handles>(() => new hook_handles(my_streq));
+			return db.GetOrCreateExtra<HookHandles>(() => new HookHandles(my_streq));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_win32_set_directory(int typ, utf8z path)
+        unsafe int ISQLite3Provider.sqlite3_win32_set_directory(int typ, Utf8z path)
         {
-            return raw.SQLITE_ERROR;
+            return RawCore.SQLITE_ERROR;
         }
 
-        unsafe int ISQLite3Provider.sqlite3_open(utf8z filename, out IntPtr db)
+        unsafe int ISQLite3Provider.sqlite3_open(Utf8z filename, out IntPtr db)
         {
             fixed (byte* p = filename)
             {
@@ -40,7 +43,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_open_v2(utf8z filename, out IntPtr db, int flags, utf8z vfs)
+        unsafe int ISQLite3Provider.sqlite3_open_v2(Utf8z filename, out IntPtr db, int flags, Utf8z vfs)
         {
             fixed (byte* p_filename = filename, p_vfs = vfs)
             {
@@ -75,7 +78,7 @@ namespace SQLitePCL
 		}
 		#pragma warning restore 649
 		
-		unsafe int ISQLite3Provider.sqlite3__vfs__delete(utf8z vfs, utf8z filename, int syncDir)
+		unsafe int ISQLite3Provider.sqlite3__vfs__delete(Utf8z vfs, Utf8z filename, int syncDir)
 		{
             fixed (byte* p_vfs = vfs, p_filename = filename)
             {
@@ -126,28 +129,28 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_exec))]
         static int exec_hook_bridge_impl(IntPtr p, int n, IntPtr values_ptr, IntPtr names_ptr)
         {
-            exec_hook_info hi = exec_hook_info.from_ptr(p);
-            return hi.call(n, values_ptr, names_ptr);
+            ExecHookInfo hi = ExecHookInfo.FromPtr(p);
+            return hi.Call(n, values_ptr, names_ptr);
         }
 		// shouldn't there be a impl/bridge thing here?  no, because this callback is not stored so it doesn't need further GC protection
 
-        int ISQLite3Provider.sqlite3_exec(sqlite3 db, utf8z sql, delegate_exec func, object user_data, out IntPtr errMsg)
+        int ISQLite3Provider.sqlite3_exec(sqlite3 db, Utf8z sql, delegate_exec func, object user_data, out IntPtr errMsg)
         {
             int rc;
 
 			NativeMethods.callback_exec cb;
-			exec_hook_info hi;
+			ExecHookInfo hi;
             if (func != null)
             {
 				cb = exec_hook_bridge_impl;
-                hi = new exec_hook_info(func, user_data);
+                hi = new ExecHookInfo(func, user_data);
             }
             else
             {
 				cb = null;
                 hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             unsafe
             {
                 fixed (byte* p_sql = sql)
@@ -160,7 +163,7 @@ namespace SQLitePCL
             return rc;
         }
 
-        unsafe int ISQLite3Provider.sqlite3_complete(utf8z sql)
+        unsafe int ISQLite3Provider.sqlite3_complete(Utf8z sql)
         {
             fixed (byte* p = sql)
             {
@@ -168,12 +171,12 @@ namespace SQLitePCL
             }
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_compileoption_get(int n)
+        unsafe Utf8z ISQLite3Provider.sqlite3_compileoption_get(int n)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_compileoption_get(n));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_compileoption_get(n));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_compileoption_used(utf8z s)
+        unsafe int ISQLite3Provider.sqlite3_compileoption_used(Utf8z s)
         {
             fixed (byte* p = s)
             {
@@ -181,15 +184,15 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_table_column_metadata(sqlite3 db, utf8z dbName, utf8z tblName, utf8z colName, out utf8z dataType, out utf8z collSeq, out int notNull, out int primaryKey, out int autoInc)
+        unsafe int ISQLite3Provider.sqlite3_table_column_metadata(sqlite3 db, Utf8z dbName, Utf8z tblName, Utf8z colName, out Utf8z dataType, out Utf8z collSeq, out int notNull, out int primaryKey, out int autoInc)
         {
             fixed (byte* p_dbName = dbName, p_tblName = tblName, p_colName = colName)
             {
                 var rc = NativeMethods.sqlite3_table_column_metadata(
                             db, p_dbName, p_tblName, p_colName, 
                             out var p_dataType, out var p_collSeq, out notNull, out primaryKey, out autoInc);
-                dataType = utf8z.FromPtr(p_dataType);
-                collSeq = utf8z.FromPtr(p_collSeq);
+                dataType = Utf8z.FromPtr(p_dataType);
+                collSeq = Utf8z.FromPtr(p_collSeq);
                 return rc;
             }
         }
@@ -202,7 +205,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_key_v2(sqlite3 db, utf8z name, byte[] k)
+        unsafe int ISQLite3Provider.sqlite3_key_v2(sqlite3 db, Utf8z name, byte[] k)
         {
             fixed (byte* p = k, p_name = name)
             {
@@ -218,7 +221,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_rekey_v2(sqlite3 db, utf8z name, byte[] k)
+        unsafe int ISQLite3Provider.sqlite3_rekey_v2(sqlite3 db, Utf8z name, byte[] k)
         {
             fixed (byte* p = k, p_name = name)
             {
@@ -246,14 +249,14 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_prepare_v2(sqlite3 db, utf8z sql, out IntPtr stm, out utf8z tail)
+        unsafe int ISQLite3Provider.sqlite3_prepare_v2(sqlite3 db, Utf8z sql, out IntPtr stm, out Utf8z tail)
         {
 // TODO obsolete.  just throw?
             fixed (byte* p_sql = sql)
             {
                 var rc = NativeMethods.sqlite3_prepare_v2(db, p_sql, -1, out stm, out var p_tail);
                 // TODO we could skip the strlen by using the length we were given
-                tail = utf8z.FromPtr(p_tail);
+                tail = Utf8z.FromPtr(p_tail);
                 return rc;
             }
         }
@@ -278,14 +281,14 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_prepare_v3(sqlite3 db, utf8z sql, uint flags, out IntPtr stm, out utf8z tail)
+        unsafe int ISQLite3Provider.sqlite3_prepare_v3(sqlite3 db, Utf8z sql, uint flags, out IntPtr stm, out Utf8z tail)
         {
 // TODO obsolete.  just throw?
             fixed (byte* p_sql = sql)
             {
                 var rc = NativeMethods.sqlite3_prepare_v3(db, p_sql, -1, flags, out stm, out var p_tail);
                 // TODO we could skip the strlen by using the length we were given
-                tail = utf8z.FromPtr(p_tail);
+                tail = Utf8z.FromPtr(p_tail);
                 return rc;
             }
         }
@@ -295,9 +298,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_db_status(db, op, out current, out highest, resetFlg);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_sql(sqlite3_stmt stmt)
+        unsafe Utf8z ISQLite3Provider.sqlite3_sql(sqlite3_stmt stmt)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_sql(stmt));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_sql(stmt));
         }
 
         IntPtr ISQLite3Provider.sqlite3_db_handle(IntPtr stmt)
@@ -305,7 +308,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_db_handle(stmt);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_blob_open(sqlite3 db, utf8z db_utf8, utf8z table_utf8, utf8z col_utf8, long rowid, int flags, out sqlite3_blob blob)
+        unsafe int ISQLite3Provider.sqlite3_blob_open(sqlite3 db, Utf8z db_utf8, Utf8z table_utf8, Utf8z col_utf8, long rowid, int flags, out sqlite3_blob blob)
         {
             fixed (byte* p_db = db_utf8, p_table = table_utf8, p_col = col_utf8)
             {
@@ -344,7 +347,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_blob_close(blob);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_get(sqlite3 db, utf8z schema, out IntPtr snap)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_get(sqlite3 db, Utf8z schema, out IntPtr snap)
         {
             fixed (byte* p_schema = schema)
             {
@@ -357,7 +360,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_snapshot_cmp(p1, p2);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_open(sqlite3 db, utf8z schema, sqlite3_snapshot snap)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_open(sqlite3 db, Utf8z schema, sqlite3_snapshot snap)
         {
             fixed (byte* p_schema = schema)
             {
@@ -365,7 +368,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_recover(sqlite3 db, utf8z name)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_recover(sqlite3 db, Utf8z name)
         {
             fixed (byte* p_name = name)
             {
@@ -378,7 +381,7 @@ namespace SQLitePCL
             NativeMethods.sqlite3_snapshot_free(snap);
         }
 
-        unsafe sqlite3_backup ISQLite3Provider.sqlite3_backup_init(sqlite3 destDb, utf8z destName, sqlite3 sourceDb, utf8z sourceName)
+        unsafe sqlite3_backup ISQLite3Provider.sqlite3_backup_init(sqlite3 destDb, Utf8z destName, sqlite3 sourceDb, Utf8z sourceName)
         {
             fixed (byte* p_destName = destName, p_sourceName = sourceName)
             {
@@ -431,9 +434,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_extended_result_codes(db, onoff);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_errstr(int rc)
+        unsafe Utf8z ISQLite3Provider.sqlite3_errstr(int rc)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_errstr(rc));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_errstr(rc));
         }
 
         int ISQLite3Provider.sqlite3_errcode(sqlite3 db)
@@ -456,7 +459,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_get_autocommit(db);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_db_readonly(sqlite3 db, utf8z dbName)
+        unsafe int ISQLite3Provider.sqlite3_db_readonly(sqlite3 db, Utf8z dbName)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -464,22 +467,22 @@ namespace SQLitePCL
             }
         }
         
-        unsafe utf8z ISQLite3Provider.sqlite3_db_filename(sqlite3 db, utf8z att)
+        unsafe Utf8z ISQLite3Provider.sqlite3_db_filename(sqlite3 db, Utf8z att)
 		{
             fixed (byte* p_att = att)
             {
-                return utf8z.FromPtr(NativeMethods.sqlite3_db_filename(db, p_att));
+                return Utf8z.FromPtr(NativeMethods.sqlite3_db_filename(db, p_att));
             }
 		}
 
-        unsafe utf8z ISQLite3Provider.sqlite3_errmsg(sqlite3 db)
+        unsafe Utf8z ISQLite3Provider.sqlite3_errmsg(sqlite3 db)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_errmsg(db));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_errmsg(db));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_libversion()
+        unsafe Utf8z ISQLite3Provider.sqlite3_libversion()
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_libversion());
+            return Utf8z.FromPtr(NativeMethods.sqlite3_libversion());
         }
 
         int ISQLite3Provider.sqlite3_libversion_number()
@@ -502,7 +505,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_config_int(op, val);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_db_config(sqlite3 db, int op, utf8z val)
+        unsafe int ISQLite3Provider.sqlite3_db_config(sqlite3 db, int op, Utf8z val)
         {
             fixed (byte* p_val = val)
             {
@@ -566,8 +569,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_commit))]
         static int commit_hook_bridge_impl(IntPtr p)
         {
-            commit_hook_info hi = commit_hook_info.from_ptr(p);
-            return hi.call();
+            CommitHookInfo hi = CommitHookInfo.FromPtr(p);
+            return hi.Call();
         }
 
         readonly NativeMethods.callback_commit commit_hook_bridge = new NativeMethods.callback_commit(commit_hook_bridge_impl);
@@ -582,18 +585,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_commit cb;
-			commit_hook_info hi;
+			CommitHookInfo hi;
             if (func != null)
             {
 				cb = commit_hook_bridge;
-                hi = new commit_hook_info(func, v);
+                hi = new CommitHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			NativeMethods.sqlite3_commit_hook(db, cb, h);
 			info.commit = h.ForDispose();
         }
@@ -607,8 +610,8 @@ namespace SQLitePCL
         static void scalar_function_hook_bridge_impl(IntPtr context, int num_args, IntPtr argsptr)
         {
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_scalar(context, num_args, argsptr);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallScalar(context, num_args, argsptr);
         }
 
         readonly NativeMethods.callback_scalar_function scalar_function_hook_bridge = new NativeMethods.callback_scalar_function(scalar_function_hook_bridge_impl);
@@ -624,18 +627,18 @@ namespace SQLitePCL
             // 1 is SQLITE_UTF8
 			int arg4 = 1 | flags;
 			NativeMethods.callback_scalar_function cb;
-			function_hook_info hi;
+			FunctionHookInfo hi;
             if (func != null)
             {
 				cb = scalar_function_hook_bridge;
-                hi = new function_hook_info(func, v);
+                hi = new FunctionHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			int rc = NativeMethods.sqlite3_create_function_v2(db, name, nargs, arg4, h, cb, null, null, null);
 			if ((rc == 0) && (cb != null))
 			{
@@ -651,8 +654,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_log))]
         static void log_hook_bridge_impl(IntPtr p, int rc, IntPtr s)
         {
-            log_hook_info hi = log_hook_info.from_ptr(p);
-            hi.call(rc, utf8z.FromIntPtr(s));
+            LogHookInfo hi = LogHookInfo.FromPtr(p);
+            hi.Call(rc, Utf8z.FromIntPtr(s));
         }
 
         readonly NativeMethods.callback_log log_hook_bridge = new NativeMethods.callback_log(log_hook_bridge_impl);
@@ -666,24 +669,24 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_log cb;
-			log_hook_info hi;
+			LogHookInfo hi;
             if (func != null)
             {
 				cb = log_hook_bridge;
-                hi = new log_hook_info(func, v);
+                hi = new LogHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			disp_log_hook_handle = h; // TODO if valid
-			var rc = NativeMethods.sqlite3_config_log(raw.SQLITE_CONFIG_LOG, cb, h);
+			var rc = NativeMethods.sqlite3_config_log(RawCore.SQLITE_CONFIG_LOG, cb, h);
 			return rc;
         }
 
-        unsafe void ISQLite3Provider.sqlite3_log(int errcode, utf8z s)
+        unsafe void ISQLite3Provider.sqlite3_log(int errcode, Utf8z s)
         {
             fixed (byte* p = s)
             {
@@ -703,8 +706,8 @@ namespace SQLitePCL
             // TODO error check agg nomem
 
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_step(context, agg, num_args, argsptr);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallStep(context, agg, num_args, argsptr);
         }
 
         [MonoPInvokeCallback (typeof(NativeMethods.callback_agg_function_final))]
@@ -714,8 +717,8 @@ namespace SQLitePCL
             // TODO error check agg nomem
 
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_final(context, agg);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallFinal(context, agg);
         }
 
         readonly NativeMethods.callback_agg_function_step agg_function_step_hook_bridge = new NativeMethods.callback_agg_function_step(agg_function_step_hook_bridge_impl);
@@ -733,13 +736,13 @@ namespace SQLitePCL
 			int arg4 = 1 | flags;
 			NativeMethods.callback_agg_function_step cb_step;
 			NativeMethods.callback_agg_function_final cb_final;
-			function_hook_info hi;
+			FunctionHookInfo hi;
             if (func_step != null)
             {
                 // TODO both func_step and func_final must be non-null
 				cb_step = agg_function_step_hook_bridge;
 				cb_final = agg_function_final_hook_bridge;
-                hi = new function_hook_info(func_step, func_final, v);
+                hi = new FunctionHookInfo(func_step, func_final, v);
             }
             else
             {
@@ -747,7 +750,7 @@ namespace SQLitePCL
 				cb_final = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			int rc = NativeMethods.sqlite3_create_function_v2(db, name, nargs, arg4, h, null, cb_step, cb_final, null);
 			if ((rc == 0) && (cb_step != null))
 			{
@@ -764,7 +767,7 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_collation))]
         static int collation_hook_bridge_impl(IntPtr p, int len1, IntPtr pv1, int len2, IntPtr pv2)
         {
-            collation_hook_info hi = collation_hook_info.from_ptr(p);
+            CollationHookInfo hi = CollationHookInfo.FromPtr(p);
             throw new NotImplementedException();
             //byte[] s1;
             //byte[] s2;
@@ -786,18 +789,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_collation cb;
-			collation_hook_info hi;
+			CollationHookInfo hi;
             if (func != null)
             {
 				cb = collation_hook_bridge;
-                hi = new collation_hook_info(func, v);
+                hi = new CollationHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             // 1 is SQLITE_UTF8
 			int rc = NativeMethods.sqlite3_create_collation(db, name, 1, h, cb);
 			if ((rc == 0) && (cb != null))
@@ -815,8 +818,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_update))]
         static void update_hook_bridge_impl(IntPtr p, int typ, IntPtr db, IntPtr tbl, Int64 rowid)
         {
-            update_hook_info hi = update_hook_info.from_ptr(p);
-            hi.call(typ, utf8z.FromIntPtr(db), utf8z.FromIntPtr(tbl), rowid);
+            UpdateHookInfo hi = UpdateHookInfo.FromPtr(p);
+            hi.Call(typ, Utf8z.FromIntPtr(db), Utf8z.FromIntPtr(tbl), rowid);
         }
 
         readonly NativeMethods.callback_update update_hook_bridge = new NativeMethods.callback_update(update_hook_bridge_impl);
@@ -831,18 +834,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_update cb;
-			update_hook_info hi;
+			UpdateHookInfo hi;
             if (func != null)
             {
 				cb = update_hook_bridge;
-                hi = new update_hook_info(func, v);
+                hi = new UpdateHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             info.update = h.ForDispose();
 			NativeMethods.sqlite3_update_hook(db, cb, h);
         }
@@ -855,8 +858,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_rollback))]
         static void rollback_hook_bridge_impl(IntPtr p)
         {
-            rollback_hook_info hi = rollback_hook_info.from_ptr(p);
-            hi.call();
+            RollbackHookInfo hi = RollbackHookInfo.FromPtr(p);
+            hi.Call();
         }
 
         readonly NativeMethods.callback_rollback rollback_hook_bridge = new NativeMethods.callback_rollback(rollback_hook_bridge_impl);
@@ -871,18 +874,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_rollback cb;
-			rollback_hook_info hi;
+			RollbackHookInfo hi;
             if (func != null)
             {
 				cb = rollback_hook_bridge;
-                hi = new rollback_hook_info(func, v);
+                hi = new RollbackHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.rollback = h.ForDispose();
 			NativeMethods.sqlite3_rollback_hook(db, cb, h);
         }
@@ -895,8 +898,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_trace))]
         static void trace_hook_bridge_impl(IntPtr p, IntPtr s)
         {
-            trace_hook_info hi = trace_hook_info.from_ptr(p);
-            hi.call(utf8z.FromIntPtr(s));
+            TraceHookInfo hi = TraceHookInfo.FromPtr(p);
+            hi.Call(Utf8z.FromIntPtr(s));
         }
 
         readonly NativeMethods.callback_trace trace_hook_bridge = new NativeMethods.callback_trace(trace_hook_bridge_impl);
@@ -911,18 +914,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_trace cb;
-			trace_hook_info hi;
+			TraceHookInfo hi;
             if (func != null)
             {
 				cb = trace_hook_bridge;
-                hi = new trace_hook_info(func, v);
+                hi = new TraceHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.trace = h.ForDispose();
 			NativeMethods.sqlite3_trace(db, cb, h);
         }
@@ -935,8 +938,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_profile))]
         static void profile_hook_bridge_impl(IntPtr p, IntPtr s, long elapsed)
         {
-            profile_hook_info hi = profile_hook_info.from_ptr(p);
-            hi.call(utf8z.FromIntPtr(s), elapsed);
+            ProfileHookInfo hi = ProfileHookInfo.FromPtr(p);
+            hi.Call(Utf8z.FromIntPtr(s), elapsed);
         }
 
         readonly NativeMethods.callback_profile profile_hook_bridge = new NativeMethods.callback_profile(profile_hook_bridge_impl);
@@ -951,18 +954,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_profile cb;
-			profile_hook_info hi;
+			ProfileHookInfo hi;
             if (func != null)
             {
 				cb = profile_hook_bridge;
-                hi = new profile_hook_info(func, v);
+                hi = new ProfileHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.profile = h.ForDispose();
 			NativeMethods.sqlite3_profile(db, cb, h);
         }
@@ -975,8 +978,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_progress_handler))]
         static int progress_handler_hook_bridge_impl(IntPtr p)
         {
-            progress_hook_info hi = progress_hook_info.from_ptr(p);
-            return hi.call();
+            ProgressHookInfo hi = ProgressHookInfo.FromPtr(p);
+            return hi.Call();
         }
 
         readonly NativeMethods.callback_progress_handler progress_handler_hook_bridge = new NativeMethods.callback_progress_handler(progress_handler_hook_bridge_impl);
@@ -991,18 +994,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_progress_handler cb;
-			progress_hook_info hi;
+			ProgressHookInfo hi;
             if (func != null)
             {
 				cb = progress_handler_hook_bridge;
-                hi = new progress_hook_info(func, v);
+                hi = new ProgressHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.progress = h.ForDispose();
 			NativeMethods.sqlite3_progress_handler(db, instructions, cb, h);
         }
@@ -1017,8 +1020,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_authorizer))]
         static int authorizer_hook_bridge_impl(IntPtr p, int action_code, IntPtr param0, IntPtr param1, IntPtr dbName, IntPtr inner_most_trigger_or_view)
         {
-            authorizer_hook_info hi = authorizer_hook_info.from_ptr(p);
-            return hi.call(action_code, utf8z.FromIntPtr(param0), utf8z.FromIntPtr(param1), utf8z.FromIntPtr(dbName), utf8z.FromIntPtr(inner_most_trigger_or_view));
+            AuthorizerHookInfo hi = AuthorizerHookInfo.from_ptr(p);
+            return hi.Call(action_code, Utf8z.FromIntPtr(param0), Utf8z.FromIntPtr(param1), Utf8z.FromIntPtr(dbName), Utf8z.FromIntPtr(inner_most_trigger_or_view));
         }
 
         readonly NativeMethods.callback_authorizer authorizer_hook_bridge = new NativeMethods.callback_authorizer(authorizer_hook_bridge_impl);
@@ -1033,18 +1036,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_authorizer cb;
-			authorizer_hook_info hi;
+			AuthorizerHookInfo hi;
             if (func != null)
             {
 				cb = authorizer_hook_bridge;
-                hi = new authorizer_hook_info(func, v);
+                hi = new AuthorizerHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.authorizer = h.ForDispose();
 			return NativeMethods.sqlite3_set_authorizer(db, cb, h);
         }
@@ -1076,9 +1079,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_status(op, out current, out highwater, resetFlag);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_sourceid()
+        unsafe Utf8z ISQLite3Provider.sqlite3_sourceid()
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_sourceid());
+            return Utf8z.FromPtr(NativeMethods.sqlite3_sourceid());
         }
 
         void ISQLite3Provider.sqlite3_result_int64(IntPtr ctx, long val)
@@ -1109,7 +1112,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe void ISQLite3Provider.sqlite3_result_error(IntPtr ctx, utf8z val)
+        unsafe void ISQLite3Provider.sqlite3_result_error(IntPtr ctx, Utf8z val)
         {
             fixed (byte* p = val)
             {
@@ -1125,7 +1128,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe void ISQLite3Provider.sqlite3_result_text(IntPtr ctx, utf8z val)
+        unsafe void ISQLite3Provider.sqlite3_result_text(IntPtr ctx, Utf8z val)
         {
             fixed (byte* p = val)
             {
@@ -1204,9 +1207,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_value_type(p);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_value_text(IntPtr p)
+        unsafe Utf8z ISQLite3Provider.sqlite3_value_text(IntPtr p)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_value_text(p));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_value_text(p));
         }
 
         int ISQLite3Provider.sqlite3_bind_int(sqlite3_stmt stm, int paramIndex, int val)
@@ -1236,7 +1239,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_bind_text(sqlite3_stmt stm, int paramIndex, utf8z t)
+        unsafe int ISQLite3Provider.sqlite3_bind_text(sqlite3_stmt stm, int paramIndex, Utf8z t)
         {
             fixed (byte* p_t = t)
             {
@@ -1288,12 +1291,12 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_bind_parameter_count(stm);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_bind_parameter_name(sqlite3_stmt stm, int paramIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_bind_parameter_name(sqlite3_stmt stm, int paramIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_bind_parameter_name(stm, paramIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_bind_parameter_name(stm, paramIndex));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_bind_parameter_index(sqlite3_stmt stm, utf8z paramName)
+        unsafe int ISQLite3Provider.sqlite3_bind_parameter_index(sqlite3_stmt stm, Utf8z paramName)
         {
             fixed (byte* p_paramName = paramName)
             {
@@ -1331,16 +1334,16 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_column_int64(stm, columnIndex);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_text(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_text(sqlite3_stmt stm, int columnIndex)
         {
             byte* p = NativeMethods.sqlite3_column_text(stm, columnIndex);
             var length = NativeMethods.sqlite3_column_bytes(stm, columnIndex);
-            return utf8z.FromPtrLen(p, length);
+            return Utf8z.FromPtrLen(p, length);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_decltype(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_decltype(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_decltype(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_decltype(stm, columnIndex));
         }
 
         double ISQLite3Provider.sqlite3_column_double(sqlite3_stmt stm, int columnIndex)
@@ -1384,24 +1387,24 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_data_count(stm);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_origin_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_origin_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_origin_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_origin_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_table_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_table_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_table_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_table_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_database_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_database_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_database_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_database_name(stm, columnIndex));
         }
 
         int ISQLite3Provider.sqlite3_reset(sqlite3_stmt stm)
@@ -1429,7 +1432,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_wal_autocheckpoint(db, n);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint(sqlite3 db, utf8z dbName)
+        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint(sqlite3 db, Utf8z dbName)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -1437,7 +1440,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint_v2(sqlite3 db, utf8z dbName, int eMode, out int logSize, out int framesCheckPointed)
+        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint_v2(sqlite3 db, Utf8z dbName, int eMode, out int logSize, out int framesCheckPointed)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -1755,7 +1758,7 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_config_int(int op, int val);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, EntryPoint = "sqlite3_config", CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_config_log(int op, NativeMethods.callback_log func, hook_handle pvUser);
+		public static extern unsafe int sqlite3_config_log(int op, NativeMethods.callback_log func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, EntryPoint = "sqlite3_db_config", CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_db_config_charptr(sqlite3 db, int op, byte* val);
@@ -1767,25 +1770,25 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_db_config_intptr_int_int(sqlite3 db, int op, IntPtr ptr, int int0, int int1);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_create_collation(sqlite3 db, byte[] strName, int nType, hook_handle pvUser, NativeMethods.callback_collation func);
+		public static extern unsafe int sqlite3_create_collation(sqlite3 db, byte[] strName, int nType, HookHandle pvUser, NativeMethods.callback_collation func);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_update_hook(sqlite3 db, NativeMethods.callback_update func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_update_hook(sqlite3 db, NativeMethods.callback_update func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_commit_hook(sqlite3 db, NativeMethods.callback_commit func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_commit_hook(sqlite3 db, NativeMethods.callback_commit func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_profile(sqlite3 db, NativeMethods.callback_profile func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_profile(sqlite3 db, NativeMethods.callback_profile func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe void sqlite3_progress_handler(sqlite3 db, int instructions, NativeMethods.callback_progress_handler func, hook_handle pvUser);
+		public static extern unsafe void sqlite3_progress_handler(sqlite3 db, int instructions, NativeMethods.callback_progress_handler func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_trace(sqlite3 db, NativeMethods.callback_trace func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_trace(sqlite3 db, NativeMethods.callback_trace func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_rollback_hook(sqlite3 db, NativeMethods.callback_rollback func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_rollback_hook(sqlite3 db, NativeMethods.callback_rollback func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe IntPtr sqlite3_db_handle(IntPtr stmt);
@@ -1803,7 +1806,7 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_stmt_readonly(sqlite3_stmt stmt);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_exec(sqlite3 db, byte* strSql, NativeMethods.callback_exec cb, hook_handle pvParam, out IntPtr errMsg);
+		public static extern unsafe int sqlite3_exec(sqlite3 db, byte* strSql, NativeMethods.callback_exec cb, HookHandle pvParam, out IntPtr errMsg);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_get_autocommit(sqlite3 db);
@@ -1884,10 +1887,10 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_wal_checkpoint_v2(sqlite3 db, byte* dbName, int eMode, out int logSize, out int framesCheckPointed);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_set_authorizer(sqlite3 db, NativeMethods.callback_authorizer cb, hook_handle pvUser);
+		public static extern unsafe int sqlite3_set_authorizer(sqlite3 db, NativeMethods.callback_authorizer cb, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_create_function_v2(sqlite3 db, byte[] strName, int nArgs, int nType, hook_handle pvUser, NativeMethods.callback_scalar_function func, NativeMethods.callback_agg_function_step fstep, NativeMethods.callback_agg_function_final ffinal, NativeMethods.callback_destroy fdestroy);
+		public static extern unsafe int sqlite3_create_function_v2(sqlite3 db, byte[] strName, int nArgs, int nType, HookHandle pvUser, NativeMethods.callback_scalar_function func, NativeMethods.callback_agg_function_step fstep, NativeMethods.callback_agg_function_final ffinal, NativeMethods.callback_destroy fdestroy);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_keyword_count();
@@ -1941,8 +1944,11 @@ namespace SQLitePCL
 
     }
 #else
+    /// <summary>
+    /// 
+    /// </summary>
     [Preserve(AllMembers = true)]
-    public sealed class SQLite3Provider_e_sqlcipher : ISQLite3Provider
+    public sealed class ProviderESqlcipher : ISQLite3Provider
     {
 		const CallingConvention CALLING_CONVENTION = CallingConvention.Cdecl;
 
@@ -1956,17 +1962,17 @@ namespace SQLitePCL
             return 0 == NativeMethods.sqlite3_strnicmp(p, q, len);
         }
 
-        hook_handles get_hooks(sqlite3 db)
+        HookHandles get_hooks(sqlite3 db)
         {
-			return db.GetOrCreateExtra<hook_handles>(() => new hook_handles(my_streq));
+			return db.GetOrCreateExtra<HookHandles>(() => new HookHandles(my_streq));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_win32_set_directory(int typ, utf8z path)
+        unsafe int ISQLite3Provider.sqlite3_win32_set_directory(int typ, Utf8z path)
         {
-            return raw.SQLITE_ERROR;
+            return RawCore.SQLITE_ERROR;
         }
 
-        unsafe int ISQLite3Provider.sqlite3_open(utf8z filename, out IntPtr db)
+        unsafe int ISQLite3Provider.sqlite3_open(Utf8z filename, out IntPtr db)
         {
             fixed (byte* p = filename)
             {
@@ -1974,7 +1980,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_open_v2(utf8z filename, out IntPtr db, int flags, utf8z vfs)
+        unsafe int ISQLite3Provider.sqlite3_open_v2(Utf8z filename, out IntPtr db, int flags, Utf8z vfs)
         {
             fixed (byte* p_filename = filename, p_vfs = vfs)
             {
@@ -2009,7 +2015,7 @@ namespace SQLitePCL
 		}
 #pragma warning restore 649
 		
-		unsafe int ISQLite3Provider.sqlite3__vfs__delete(utf8z vfs, utf8z filename, int syncDir)
+		unsafe int ISQLite3Provider.sqlite3__vfs__delete(Utf8z vfs, Utf8z filename, int syncDir)
 		{
             fixed (byte* p_vfs = vfs, p_filename = filename)
             {
@@ -2060,28 +2066,28 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_exec))]
         static int exec_hook_bridge_impl(IntPtr p, int n, IntPtr values_ptr, IntPtr names_ptr)
         {
-            exec_hook_info hi = exec_hook_info.from_ptr(p);
-            return hi.call(n, values_ptr, names_ptr);
+            ExecHookInfo hi = ExecHookInfo.FromPtr(p);
+            return hi.Call(n, values_ptr, names_ptr);
         }
 		// shouldn't there be a impl/bridge thing here?  no, because this callback is not stored so it doesn't need further GC protection
 
-        int ISQLite3Provider.sqlite3_exec(sqlite3 db, utf8z sql, delegate_exec func, object user_data, out IntPtr errMsg)
+        int ISQLite3Provider.sqlite3_exec(sqlite3 db, Utf8z sql, delegate_exec func, object user_data, out IntPtr errMsg)
         {
             int rc;
 
 			NativeMethods.callback_exec cb;
-			exec_hook_info hi;
+			ExecHookInfo hi;
             if (func != null)
             {
 				cb = exec_hook_bridge_impl;
-                hi = new exec_hook_info(func, user_data);
+                hi = new ExecHookInfo(func, user_data);
             }
             else
             {
 				cb = null;
                 hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             unsafe
             {
                 fixed (byte* p_sql = sql)
@@ -2094,7 +2100,7 @@ namespace SQLitePCL
             return rc;
         }
 
-        unsafe int ISQLite3Provider.sqlite3_complete(utf8z sql)
+        unsafe int ISQLite3Provider.sqlite3_complete(Utf8z sql)
         {
             fixed (byte* p = sql)
             {
@@ -2102,12 +2108,12 @@ namespace SQLitePCL
             }
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_compileoption_get(int n)
+        unsafe Utf8z ISQLite3Provider.sqlite3_compileoption_get(int n)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_compileoption_get(n));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_compileoption_get(n));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_compileoption_used(utf8z s)
+        unsafe int ISQLite3Provider.sqlite3_compileoption_used(Utf8z s)
         {
             fixed (byte* p = s)
             {
@@ -2115,15 +2121,15 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_table_column_metadata(sqlite3 db, utf8z dbName, utf8z tblName, utf8z colName, out utf8z dataType, out utf8z collSeq, out int notNull, out int primaryKey, out int autoInc)
+        unsafe int ISQLite3Provider.sqlite3_table_column_metadata(sqlite3 db, Utf8z dbName, Utf8z tblName, Utf8z colName, out Utf8z dataType, out Utf8z collSeq, out int notNull, out int primaryKey, out int autoInc)
         {
             fixed (byte* p_dbName = dbName, p_tblName = tblName, p_colName = colName)
             {
                 var rc = NativeMethods.sqlite3_table_column_metadata(
                             db, p_dbName, p_tblName, p_colName, 
                             out var p_dataType, out var p_collSeq, out notNull, out primaryKey, out autoInc);
-                dataType = utf8z.FromPtr(p_dataType);
-                collSeq = utf8z.FromPtr(p_collSeq);
+                dataType = Utf8z.FromPtr(p_dataType);
+                collSeq = Utf8z.FromPtr(p_collSeq);
                 return rc;
             }
         }
@@ -2136,7 +2142,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_key_v2(sqlite3 db, utf8z name, ReadOnlySpan<byte> k)
+        unsafe int ISQLite3Provider.sqlite3_key_v2(sqlite3 db, Utf8z name, ReadOnlySpan<byte> k)
         {
             fixed (byte* p = k, p_name = name)
             {
@@ -2152,7 +2158,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_rekey_v2(sqlite3 db, utf8z name, ReadOnlySpan<byte> k)
+        unsafe int ISQLite3Provider.sqlite3_rekey_v2(sqlite3 db, Utf8z name, ReadOnlySpan<byte> k)
         {
             fixed (byte* p = k, p_name = name)
             {
@@ -2179,14 +2185,14 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_prepare_v2(sqlite3 db, utf8z sql, out IntPtr stm, out utf8z tail)
+        unsafe int ISQLite3Provider.sqlite3_prepare_v2(sqlite3 db, Utf8z sql, out IntPtr stm, out Utf8z tail)
         {
 // TODO obsolete.  just throw?
             fixed (byte* p_sql = sql)
             {
                 var rc = NativeMethods.sqlite3_prepare_v2(db, p_sql, -1, out stm, out var p_tail);
                 // TODO we could skip the strlen by using the length we were given
-                tail = utf8z.FromPtr(p_tail);
+                tail = Utf8z.FromPtr(p_tail);
                 return rc;
             }
         }
@@ -2210,14 +2216,14 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_prepare_v3(sqlite3 db, utf8z sql, uint flags, out IntPtr stm, out utf8z tail)
+        unsafe int ISQLite3Provider.sqlite3_prepare_v3(sqlite3 db, Utf8z sql, uint flags, out IntPtr stm, out Utf8z tail)
         {
 // TODO obsolete.  just throw?
             fixed (byte* p_sql = sql)
             {
                 var rc = NativeMethods.sqlite3_prepare_v3(db, p_sql, -1, flags, out stm, out var p_tail);
                 // TODO we could skip the strlen by using the length we were given
-                tail = utf8z.FromPtr(p_tail);
+                tail = Utf8z.FromPtr(p_tail);
                 return rc;
             }
         }
@@ -2227,9 +2233,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_db_status(db, op, out current, out highest, resetFlg);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_sql(sqlite3_stmt stmt)
+        unsafe Utf8z ISQLite3Provider.sqlite3_sql(sqlite3_stmt stmt)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_sql(stmt));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_sql(stmt));
         }
 
         IntPtr ISQLite3Provider.sqlite3_db_handle(IntPtr stmt)
@@ -2237,7 +2243,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_db_handle(stmt);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_blob_open(sqlite3 db, utf8z db_utf8, utf8z table_utf8, utf8z col_utf8, long rowid, int flags, out sqlite3_blob blob)
+        unsafe int ISQLite3Provider.sqlite3_blob_open(sqlite3 db, Utf8z db_utf8, Utf8z table_utf8, Utf8z col_utf8, long rowid, int flags, out sqlite3_blob blob)
         {
             fixed (byte* p_db = db_utf8, p_table = table_utf8, p_col = col_utf8)
             {
@@ -2276,7 +2282,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_blob_close(blob);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_get(sqlite3 db, utf8z schema, out IntPtr snap)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_get(sqlite3 db, Utf8z schema, out IntPtr snap)
         {
             fixed (byte* p_schema = schema)
             {
@@ -2289,7 +2295,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_snapshot_cmp(p1, p2);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_open(sqlite3 db, utf8z schema, sqlite3_snapshot snap)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_open(sqlite3 db, Utf8z schema, sqlite3_snapshot snap)
         {
             fixed (byte* p_schema = schema)
             {
@@ -2297,7 +2303,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_snapshot_recover(sqlite3 db, utf8z name)
+        unsafe int ISQLite3Provider.sqlite3_snapshot_recover(sqlite3 db, Utf8z name)
         {
             fixed (byte* p_name = name)
             {
@@ -2310,7 +2316,7 @@ namespace SQLitePCL
             NativeMethods.sqlite3_snapshot_free(snap);
         }
 
-        unsafe sqlite3_backup ISQLite3Provider.sqlite3_backup_init(sqlite3 destDb, utf8z destName, sqlite3 sourceDb, utf8z sourceName)
+        unsafe sqlite3_backup ISQLite3Provider.sqlite3_backup_init(sqlite3 destDb, Utf8z destName, sqlite3 sourceDb, Utf8z sourceName)
         {
             fixed (byte* p_destName = destName, p_sourceName = sourceName)
             {
@@ -2363,9 +2369,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_extended_result_codes(db, onoff);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_errstr(int rc)
+        unsafe Utf8z ISQLite3Provider.sqlite3_errstr(int rc)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_errstr(rc));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_errstr(rc));
         }
 
         int ISQLite3Provider.sqlite3_errcode(sqlite3 db)
@@ -2388,7 +2394,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_get_autocommit(db);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_db_readonly(sqlite3 db, utf8z dbName)
+        unsafe int ISQLite3Provider.sqlite3_db_readonly(sqlite3 db, Utf8z dbName)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -2396,22 +2402,22 @@ namespace SQLitePCL
             }
         }
         
-        unsafe utf8z ISQLite3Provider.sqlite3_db_filename(sqlite3 db, utf8z att)
+        unsafe Utf8z ISQLite3Provider.sqlite3_db_filename(sqlite3 db, Utf8z att)
 		{
             fixed (byte* p_att = att)
             {
-                return utf8z.FromPtr(NativeMethods.sqlite3_db_filename(db, p_att));
+                return Utf8z.FromPtr(NativeMethods.sqlite3_db_filename(db, p_att));
             }
 		}
 
-        unsafe utf8z ISQLite3Provider.sqlite3_errmsg(sqlite3 db)
+        unsafe Utf8z ISQLite3Provider.sqlite3_errmsg(sqlite3 db)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_errmsg(db));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_errmsg(db));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_libversion()
+        unsafe Utf8z ISQLite3Provider.sqlite3_libversion()
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_libversion());
+            return Utf8z.FromPtr(NativeMethods.sqlite3_libversion());
         }
 
         int ISQLite3Provider.sqlite3_libversion_number()
@@ -2434,7 +2440,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_config_int(op, val);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_db_config(sqlite3 db, int op, utf8z val)
+        unsafe int ISQLite3Provider.sqlite3_db_config(sqlite3 db, int op, Utf8z val)
         {
             fixed (byte* p_val = val)
             {
@@ -2498,8 +2504,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_commit))]
         static int commit_hook_bridge_impl(IntPtr p)
         {
-            commit_hook_info hi = commit_hook_info.from_ptr(p);
-            return hi.call();
+            CommitHookInfo hi = CommitHookInfo.FromPtr(p);
+            return hi.Call();
         }
 
         readonly NativeMethods.callback_commit commit_hook_bridge = new NativeMethods.callback_commit(commit_hook_bridge_impl);
@@ -2514,18 +2520,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_commit cb;
-			commit_hook_info hi;
+			CommitHookInfo hi;
             if (func != null)
             {
 				cb = commit_hook_bridge;
-                hi = new commit_hook_info(func, v);
+                hi = new CommitHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			NativeMethods.sqlite3_commit_hook(db, cb, h);
 			info.commit = h.ForDispose();
         }
@@ -2539,8 +2545,8 @@ namespace SQLitePCL
         static void scalar_function_hook_bridge_impl(IntPtr context, int num_args, IntPtr argsptr)
         {
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_scalar(context, num_args, argsptr);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallScalar(context, num_args, argsptr);
         }
 
         readonly NativeMethods.callback_scalar_function scalar_function_hook_bridge = new NativeMethods.callback_scalar_function(scalar_function_hook_bridge_impl);
@@ -2556,18 +2562,18 @@ namespace SQLitePCL
             // 1 is SQLITE_UTF8
 			int arg4 = 1 | flags;
 			NativeMethods.callback_scalar_function cb;
-			function_hook_info hi;
+			FunctionHookInfo hi;
             if (func != null)
             {
 				cb = scalar_function_hook_bridge;
-                hi = new function_hook_info(func, v);
+                hi = new FunctionHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			int rc = NativeMethods.sqlite3_create_function_v2(db, name, nargs, arg4, h, cb, null, null, null);
 			if ((rc == 0) && (cb != null))
 			{
@@ -2583,8 +2589,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_log))]
         static void log_hook_bridge_impl(IntPtr p, int rc, IntPtr s)
         {
-            log_hook_info hi = log_hook_info.from_ptr(p);
-            hi.call(rc, utf8z.FromIntPtr(s));
+            LogHookInfo hi = LogHookInfo.FromPtr(p);
+            hi.Call(rc, Utf8z.FromIntPtr(s));
         }
 
         readonly NativeMethods.callback_log log_hook_bridge = new NativeMethods.callback_log(log_hook_bridge_impl);
@@ -2598,24 +2604,24 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_log cb;
-			log_hook_info hi;
+			LogHookInfo hi;
             if (func != null)
             {
 				cb = log_hook_bridge;
-                hi = new log_hook_info(func, v);
+                hi = new LogHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			disp_log_hook_handle = h; // TODO if valid
-			var rc = NativeMethods.sqlite3_config_log(raw.SQLITE_CONFIG_LOG, cb, h);
+			var rc = NativeMethods.sqlite3_config_log(RawCore.SQLITE_CONFIG_LOG, cb, h);
 			return rc;
         }
 
-        unsafe void ISQLite3Provider.sqlite3_log(int errcode, utf8z s)
+        unsafe void ISQLite3Provider.sqlite3_log(int errcode, Utf8z s)
         {
             fixed (byte* p = s)
             {
@@ -2635,8 +2641,8 @@ namespace SQLitePCL
             // TODO error check agg nomem
 
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_step(context, agg, num_args, argsptr);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallStep(context, agg, num_args, argsptr);
         }
 
         [MonoPInvokeCallback (typeof(NativeMethods.callback_agg_function_final))]
@@ -2646,8 +2652,8 @@ namespace SQLitePCL
             // TODO error check agg nomem
 
             IntPtr p = NativeMethods.sqlite3_user_data(context);
-            function_hook_info hi = function_hook_info.from_ptr(p);
-            hi.call_final(context, agg);
+            FunctionHookInfo hi = FunctionHookInfo.FromPtr(p);
+            hi.CallFinal(context, agg);
         }
 
         readonly NativeMethods.callback_agg_function_step agg_function_step_hook_bridge = new NativeMethods.callback_agg_function_step(agg_function_step_hook_bridge_impl);
@@ -2665,13 +2671,13 @@ namespace SQLitePCL
 			int arg4 = 1 | flags;
 			NativeMethods.callback_agg_function_step cb_step;
 			NativeMethods.callback_agg_function_final cb_final;
-			function_hook_info hi;
+			FunctionHookInfo hi;
             if (func_step != null)
             {
                 // TODO both func_step and func_final must be non-null
 				cb_step = agg_function_step_hook_bridge;
 				cb_final = agg_function_final_hook_bridge;
-                hi = new function_hook_info(func_step, func_final, v);
+                hi = new FunctionHookInfo(func_step, func_final, v);
             }
             else
             {
@@ -2679,7 +2685,7 @@ namespace SQLitePCL
 				cb_final = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			int rc = NativeMethods.sqlite3_create_function_v2(db, name, nargs, arg4, h, null, cb_step, cb_final, null);
 			if ((rc == 0) && (cb_step != null))
 			{
@@ -2696,7 +2702,7 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_collation))]
         static int collation_hook_bridge_impl(IntPtr p, int len1, IntPtr pv1, int len2, IntPtr pv2)
         {
-            collation_hook_info hi = collation_hook_info.from_ptr(p);
+            CollationHookInfo hi = CollationHookInfo.FromPtr(p);
             ReadOnlySpan<byte> s1;
             ReadOnlySpan<byte> s2;
             unsafe
@@ -2704,7 +2710,7 @@ namespace SQLitePCL
                 s1 = new ReadOnlySpan<byte>(pv1.ToPointer(), len1);
                 s2 = new ReadOnlySpan<byte>(pv2.ToPointer(), len2);
             }
-            return hi.call(s1, s2);
+            return hi.Call(s1, s2);
         }
 
         readonly NativeMethods.callback_collation collation_hook_bridge = new NativeMethods.callback_collation(collation_hook_bridge_impl);
@@ -2717,18 +2723,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_collation cb;
-			collation_hook_info hi;
+			CollationHookInfo hi;
             if (func != null)
             {
 				cb = collation_hook_bridge;
-                hi = new collation_hook_info(func, v);
+                hi = new CollationHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             // 1 is SQLITE_UTF8
 			int rc = NativeMethods.sqlite3_create_collation(db, name, 1, h, cb);
 			if ((rc == 0) && (cb != null))
@@ -2746,8 +2752,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_update))]
         static void update_hook_bridge_impl(IntPtr p, int typ, IntPtr db, IntPtr tbl, Int64 rowid)
         {
-            update_hook_info hi = update_hook_info.from_ptr(p);
-            hi.call(typ, utf8z.FromIntPtr(db), utf8z.FromIntPtr(tbl), rowid);
+            UpdateHookInfo hi = UpdateHookInfo.FromPtr(p);
+            hi.Call(typ, Utf8z.FromIntPtr(db), Utf8z.FromIntPtr(tbl), rowid);
         }
 
         readonly NativeMethods.callback_update update_hook_bridge = new NativeMethods.callback_update(update_hook_bridge_impl);
@@ -2762,18 +2768,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_update cb;
-			update_hook_info hi;
+			UpdateHookInfo hi;
             if (func != null)
             {
 				cb = update_hook_bridge;
-                hi = new update_hook_info(func, v);
+                hi = new UpdateHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
             info.update = h.ForDispose();
 			NativeMethods.sqlite3_update_hook(db, cb, h);
         }
@@ -2786,8 +2792,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_rollback))]
         static void rollback_hook_bridge_impl(IntPtr p)
         {
-            rollback_hook_info hi = rollback_hook_info.from_ptr(p);
-            hi.call();
+            RollbackHookInfo hi = RollbackHookInfo.FromPtr(p);
+            hi.Call();
         }
 
         readonly NativeMethods.callback_rollback rollback_hook_bridge = new NativeMethods.callback_rollback(rollback_hook_bridge_impl);
@@ -2802,18 +2808,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_rollback cb;
-			rollback_hook_info hi;
+			RollbackHookInfo hi;
             if (func != null)
             {
 				cb = rollback_hook_bridge;
-                hi = new rollback_hook_info(func, v);
+                hi = new RollbackHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.rollback = h.ForDispose();
 			NativeMethods.sqlite3_rollback_hook(db, cb, h);
         }
@@ -2826,8 +2832,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_trace))]
         static void trace_hook_bridge_impl(IntPtr p, IntPtr s)
         {
-            trace_hook_info hi = trace_hook_info.from_ptr(p);
-            hi.call(utf8z.FromIntPtr(s));
+            TraceHookInfo hi = TraceHookInfo.FromPtr(p);
+            hi.Call(Utf8z.FromIntPtr(s));
         }
 
         readonly NativeMethods.callback_trace trace_hook_bridge = new NativeMethods.callback_trace(trace_hook_bridge_impl);
@@ -2842,18 +2848,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_trace cb;
-			trace_hook_info hi;
+			TraceHookInfo hi;
             if (func != null)
             {
 				cb = trace_hook_bridge;
-                hi = new trace_hook_info(func, v);
+                hi = new TraceHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.trace = h.ForDispose();
 			NativeMethods.sqlite3_trace(db, cb, h);
         }
@@ -2866,8 +2872,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_profile))]
         static void profile_hook_bridge_impl(IntPtr p, IntPtr s, long elapsed)
         {
-            profile_hook_info hi = profile_hook_info.from_ptr(p);
-            hi.call(utf8z.FromIntPtr(s), elapsed);
+            ProfileHookInfo hi = ProfileHookInfo.FromPtr(p);
+            hi.Call(Utf8z.FromIntPtr(s), elapsed);
         }
 
         readonly NativeMethods.callback_profile profile_hook_bridge = new NativeMethods.callback_profile(profile_hook_bridge_impl);
@@ -2882,18 +2888,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_profile cb;
-			profile_hook_info hi;
+			ProfileHookInfo hi;
             if (func != null)
             {
 				cb = profile_hook_bridge;
-                hi = new profile_hook_info(func, v);
+                hi = new ProfileHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.profile = h.ForDispose();
 			NativeMethods.sqlite3_profile(db, cb, h);
         }
@@ -2906,8 +2912,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_progress_handler))]
         static int progress_handler_hook_bridge_impl(IntPtr p)
         {
-            progress_hook_info hi = progress_hook_info.from_ptr(p);
-            return hi.call();
+            ProgressHookInfo hi = ProgressHookInfo.FromPtr(p);
+            return hi.Call();
         }
 
         readonly NativeMethods.callback_progress_handler progress_handler_hook_bridge = new NativeMethods.callback_progress_handler(progress_handler_hook_bridge_impl);
@@ -2922,18 +2928,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_progress_handler cb;
-			progress_hook_info hi;
+			ProgressHookInfo hi;
             if (func != null)
             {
 				cb = progress_handler_hook_bridge;
-                hi = new progress_hook_info(func, v);
+                hi = new ProgressHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.progress = h.ForDispose();
 			NativeMethods.sqlite3_progress_handler(db, instructions, cb, h);
         }
@@ -2948,8 +2954,8 @@ namespace SQLitePCL
         [MonoPInvokeCallback (typeof(NativeMethods.callback_authorizer))]
         static int authorizer_hook_bridge_impl(IntPtr p, int action_code, IntPtr param0, IntPtr param1, IntPtr dbName, IntPtr inner_most_trigger_or_view)
         {
-            authorizer_hook_info hi = authorizer_hook_info.from_ptr(p);
-            return hi.call(action_code, utf8z.FromIntPtr(param0), utf8z.FromIntPtr(param1), utf8z.FromIntPtr(dbName), utf8z.FromIntPtr(inner_most_trigger_or_view));
+            AuthorizerHookInfo hi = AuthorizerHookInfo.from_ptr(p);
+            return hi.Call(action_code, Utf8z.FromIntPtr(param0), Utf8z.FromIntPtr(param1), Utf8z.FromIntPtr(dbName), Utf8z.FromIntPtr(inner_most_trigger_or_view));
         }
 
         readonly NativeMethods.callback_authorizer authorizer_hook_bridge = new NativeMethods.callback_authorizer(authorizer_hook_bridge_impl);
@@ -2964,18 +2970,18 @@ namespace SQLitePCL
             }
 
 			NativeMethods.callback_authorizer cb;
-			authorizer_hook_info hi;
+			AuthorizerHookInfo hi;
             if (func != null)
             {
 				cb = authorizer_hook_bridge;
-                hi = new authorizer_hook_info(func, v);
+                hi = new AuthorizerHookInfo(func, v);
             }
             else
             {
 				cb = null;
 				hi = null;
             }
-			var h = new hook_handle(hi);
+			var h = new HookHandle(hi);
 			info.authorizer = h.ForDispose();
 			return NativeMethods.sqlite3_set_authorizer(db, cb, h);
         }
@@ -3007,9 +3013,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_status(op, out current, out highwater, resetFlag);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_sourceid()
+        unsafe Utf8z ISQLite3Provider.sqlite3_sourceid()
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_sourceid());
+            return Utf8z.FromPtr(NativeMethods.sqlite3_sourceid());
         }
 
         void ISQLite3Provider.sqlite3_result_int64(IntPtr ctx, long val)
@@ -3040,7 +3046,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe void ISQLite3Provider.sqlite3_result_error(IntPtr ctx, utf8z val)
+        unsafe void ISQLite3Provider.sqlite3_result_error(IntPtr ctx, Utf8z val)
         {
             fixed (byte* p = val)
             {
@@ -3056,7 +3062,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe void ISQLite3Provider.sqlite3_result_text(IntPtr ctx, utf8z val)
+        unsafe void ISQLite3Provider.sqlite3_result_text(IntPtr ctx, Utf8z val)
         {
             fixed (byte* p = val)
             {
@@ -3134,9 +3140,9 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_value_type(p);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_value_text(IntPtr p)
+        unsafe Utf8z ISQLite3Provider.sqlite3_value_text(IntPtr p)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_value_text(p));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_value_text(p));
         }
 
         int ISQLite3Provider.sqlite3_bind_int(sqlite3_stmt stm, int paramIndex, int val)
@@ -3166,7 +3172,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_bind_text(sqlite3_stmt stm, int paramIndex, utf8z t)
+        unsafe int ISQLite3Provider.sqlite3_bind_text(sqlite3_stmt stm, int paramIndex, Utf8z t)
         {
             fixed (byte* p_t = t)
             {
@@ -3218,12 +3224,12 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_bind_parameter_count(stm);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_bind_parameter_name(sqlite3_stmt stm, int paramIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_bind_parameter_name(sqlite3_stmt stm, int paramIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_bind_parameter_name(stm, paramIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_bind_parameter_name(stm, paramIndex));
         }
 
-        unsafe int ISQLite3Provider.sqlite3_bind_parameter_index(sqlite3_stmt stm, utf8z paramName)
+        unsafe int ISQLite3Provider.sqlite3_bind_parameter_index(sqlite3_stmt stm, Utf8z paramName)
         {
             fixed (byte* p_paramName = paramName)
             {
@@ -3261,16 +3267,16 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_column_int64(stm, columnIndex);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_text(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_text(sqlite3_stmt stm, int columnIndex)
         {
             byte* p = NativeMethods.sqlite3_column_text(stm, columnIndex);
             var length = NativeMethods.sqlite3_column_bytes(stm, columnIndex);
-            return utf8z.FromPtrLen(p, length);
+            return Utf8z.FromPtrLen(p, length);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_decltype(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_decltype(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_decltype(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_decltype(stm, columnIndex));
         }
 
         double ISQLite3Provider.sqlite3_column_double(sqlite3_stmt stm, int columnIndex)
@@ -3313,24 +3319,24 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_data_count(stm);
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_origin_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_origin_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_origin_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_origin_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_table_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_table_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_table_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_table_name(stm, columnIndex));
         }
 
-        unsafe utf8z ISQLite3Provider.sqlite3_column_database_name(sqlite3_stmt stm, int columnIndex)
+        unsafe Utf8z ISQLite3Provider.sqlite3_column_database_name(sqlite3_stmt stm, int columnIndex)
         {
-            return utf8z.FromPtr(NativeMethods.sqlite3_column_database_name(stm, columnIndex));
+            return Utf8z.FromPtr(NativeMethods.sqlite3_column_database_name(stm, columnIndex));
         }
 
         int ISQLite3Provider.sqlite3_reset(sqlite3_stmt stm)
@@ -3358,7 +3364,7 @@ namespace SQLitePCL
             return NativeMethods.sqlite3_wal_autocheckpoint(db, n);
         }
 
-        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint(sqlite3 db, utf8z dbName)
+        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint(sqlite3 db, Utf8z dbName)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -3366,7 +3372,7 @@ namespace SQLitePCL
             }
         }
 
-        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint_v2(sqlite3 db, utf8z dbName, int eMode, out int logSize, out int framesCheckPointed)
+        unsafe int ISQLite3Provider.sqlite3_wal_checkpoint_v2(sqlite3 db, Utf8z dbName, int eMode, out int logSize, out int framesCheckPointed)
         {
             fixed (byte* p_dbName = dbName)
             {
@@ -3684,7 +3690,7 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_config_int(int op, int val);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, EntryPoint = "sqlite3_config", CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_config_log(int op, NativeMethods.callback_log func, hook_handle pvUser);
+		public static extern unsafe int sqlite3_config_log(int op, NativeMethods.callback_log func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, EntryPoint = "sqlite3_db_config", CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_db_config_charptr(sqlite3 db, int op, byte* val);
@@ -3696,25 +3702,25 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_db_config_intptr_int_int(sqlite3 db, int op, IntPtr ptr, int int0, int int1);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_create_collation(sqlite3 db, byte[] strName, int nType, hook_handle pvUser, NativeMethods.callback_collation func);
+		public static extern unsafe int sqlite3_create_collation(sqlite3 db, byte[] strName, int nType, HookHandle pvUser, NativeMethods.callback_collation func);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_update_hook(sqlite3 db, NativeMethods.callback_update func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_update_hook(sqlite3 db, NativeMethods.callback_update func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_commit_hook(sqlite3 db, NativeMethods.callback_commit func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_commit_hook(sqlite3 db, NativeMethods.callback_commit func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_profile(sqlite3 db, NativeMethods.callback_profile func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_profile(sqlite3 db, NativeMethods.callback_profile func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe void sqlite3_progress_handler(sqlite3 db, int instructions, NativeMethods.callback_progress_handler func, hook_handle pvUser);
+		public static extern unsafe void sqlite3_progress_handler(sqlite3 db, int instructions, NativeMethods.callback_progress_handler func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_trace(sqlite3 db, NativeMethods.callback_trace func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_trace(sqlite3 db, NativeMethods.callback_trace func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe IntPtr sqlite3_rollback_hook(sqlite3 db, NativeMethods.callback_rollback func, hook_handle pvUser);
+		public static extern unsafe IntPtr sqlite3_rollback_hook(sqlite3 db, NativeMethods.callback_rollback func, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe IntPtr sqlite3_db_handle(IntPtr stmt);
@@ -3732,7 +3738,7 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_stmt_readonly(sqlite3_stmt stmt);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_exec(sqlite3 db, byte* strSql, NativeMethods.callback_exec cb, hook_handle pvParam, out IntPtr errMsg);
+		public static extern unsafe int sqlite3_exec(sqlite3 db, byte* strSql, NativeMethods.callback_exec cb, HookHandle pvParam, out IntPtr errMsg);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_get_autocommit(sqlite3 db);
@@ -3813,10 +3819,10 @@ namespace SQLitePCL
 		public static extern unsafe int sqlite3_wal_checkpoint_v2(sqlite3 db, byte* dbName, int eMode, out int logSize, out int framesCheckPointed);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_set_authorizer(sqlite3 db, NativeMethods.callback_authorizer cb, hook_handle pvUser);
+		public static extern unsafe int sqlite3_set_authorizer(sqlite3 db, NativeMethods.callback_authorizer cb, HookHandle pvUser);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
-		public static extern unsafe int sqlite3_create_function_v2(sqlite3 db, byte[] strName, int nArgs, int nType, hook_handle pvUser, NativeMethods.callback_scalar_function func, NativeMethods.callback_agg_function_step fstep, NativeMethods.callback_agg_function_final ffinal, NativeMethods.callback_destroy fdestroy);
+		public static extern unsafe int sqlite3_create_function_v2(sqlite3 db, byte[] strName, int nArgs, int nType, HookHandle pvUser, NativeMethods.callback_scalar_function func, NativeMethods.callback_agg_function_step fstep, NativeMethods.callback_agg_function_final ffinal, NativeMethods.callback_destroy fdestroy);
 
 		[DllImport(SQLITE_DLL, ExactSpelling=true, CallingConvention = CALLING_CONVENTION)]
 		public static extern unsafe int sqlite3_keyword_count();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -13,7 +14,14 @@ namespace TestWPFUI.SQLiteCipher.Models
     [Table("local_test")]
     public class LocalTestEntity
     {
-        public int ID { get; set; }
+        /// <summary>
+        /// 标识
+        /// </summary>
+        [Key]
+        public long ID { get; set; }
+        /// <summary>
+        /// 姓名
+        /// </summary>
         public string Name { get; set; }
     }
 }

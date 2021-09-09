@@ -1,0 +1,120 @@
+﻿<vm:BindableUserControl x:Class="TestWPFUI.SQLiteCipher.UControls.EFCoreContent"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TestWPFUI.SQLiteCipher.UControls"
+             xmlns:vm="clr-namespace:TestWPFUI.SQLiteCipher.ViewModels"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             mc:Ignorable="d"
+             Initialized="UserControl_Initialized"
+             Loaded="UserControl_Loaded">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="4">
+            <RadioButton x:Name="RdoBtnView" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="10,5,10,5" IsChecked="True" Content="可视化" />
+            <RadioButton x:Name="RdoBtnSelect" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="10,5,10,5" IsChecked="False" Content="SQL查询" />
+            <RadioButton x:Name="RdoBtnConfig" Style="{StaticResource MaterialDesignTabRadioButton}" Margin="10,5,10,5" IsChecked="False" Content="配置设置" />
+        </StackPanel>
+        <Grid Grid.Row="1" Margin="5" Visibility="{Binding ElementName=RdoBtnView,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
+                <StackPanel Orientation="Horizontal" Margin="0,5,5,5">
+                    <TextBlock VerticalAlignment="Center" Text="表："/>
+                    <ComboBox x:Name="CmbTables" ItemsSource="{Binding Tables}" Width="100" IsReadOnly="True" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button Content="查询" Click="BtnSearchTable_Click" Margin="0,0,5,0"/>
+                    <Button Content="导出" Click="BtnExportTable_Click" Margin="0,0,5,0" CommandParameter="0"/>
+                    <Button Content="导入" Click="BtnImportTable_Click" Margin="0,0,5,0" CommandParameter="0"/>
+                    <materialDesign:PopupBox x:Name="UBoxPopupOper" StaysOpen="False" PlacementMode="LeftAndAlignTopEdges">
+                        <materialDesign:PopupBox.ToggleContent>
+                            <materialDesign:PackIcon x:Name="UBoxPopupOperToggle" Kind="Cog" Margin="4,0" Width="20" Height="20" Padding="0"
+                  Foreground="{DynamicResource MaterialDesignBody}" />
+                        </materialDesign:PopupBox.ToggleContent>
+                        <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Hidden" MaxHeight="500">
+                            <StackPanel Margin="5">
+                                <Button Content="收缩数据库" Click="VacuumDatabase_Click" />
+                                <Separator/>
+                                <Button Content="导入全部" Click="BtnImportTable_Click" CommandParameter="1"/>
+                                <Button Content="导出全部" Click="BtnExportTable_Click" CommandParameter="1" />
+                                <Separator/>
+                                <Button Content="删除当前表" Click="BtnDeleteTable_Click"/>
+                                <Button Content="清空当前表" Click="BtnEmptyTable_Click" />
+                            </StackPanel>
+                        </ScrollViewer>
+                    </materialDesign:PopupBox>
+                </StackPanel>
+                <Separator/>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <TextBlock VerticalAlignment="Center" Text="实体类："/>
+                    <ComboBox ItemsSource="{Binding Entities}" Width="100"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button Content="生成类" Click="BtnTableToClass_Click" CommandParameter="false" Margin="0,0,5,0"/>
+                    <Button Content="覆盖类" Click="BtnTableToClass_Click" CommandParameter="true" Margin="0,0,5,0"/>
+                    <Button Content="生成表" Click="BtnClassToTable_Click" CommandParameter="false" Margin="0,0,5,0"/>
+                    <Button Content="覆盖表" Click="BtnClassToTable_Click" CommandParameter="true" Margin="0,0,5,0"/>
+                </StackPanel>
+            </WrapPanel>
+            <DataGrid Grid.Row="1" Grid.Column="1" x:Name="DgvTableContent" IsReadOnly="True" CanUserSortColumns="True" CanUserAddRows="False" SelectionUnit="FullRow" SelectionMode="Single" LoadingRow="DgvContentList_LoadingRow" HeadersVisibility="All" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto"/>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5" Visibility="{Binding ElementName=RdoBtnSelect,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <WrapPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3">
+                <StackPanel Orientation="Horizontal" Margin="5">
+                    <Button Content="查询" Click="BtnSearchSql_Click" Margin="0,0,5,0"/>
+                    <Button Content="执行" Click="BtnSearchExec_Click" Margin="0,0,5,0"/>
+                </StackPanel>
+            </WrapPanel>
+            <TextBox Grid.Row="1" Grid.Column="1" x:Name="TxtQuerySql" BorderBrush="{StaticResource MaterialDesignToolBackground}" BorderThickness="1" TextWrapping="Wrap" AcceptsReturn="True" />
+            <DataGrid Grid.Row="2" Grid.Column="1" x:Name="DgvSelectContent" IsReadOnly="True" CanUserSortColumns="True" CanUserAddRows="False" SelectionUnit="FullRow" SelectionMode="Extended" HeadersVisibility="All" LoadingRow="DgvContentList_LoadingRow" Background="Transparent" materialDesign:DataGridAssist.CellPadding="8" materialDesign:DataGridAssist.ColumnHeaderPadding="8"/>
+        </Grid>
+        <Grid Grid.Row="1" Margin="5" Visibility="{Binding ElementName=RdoBtnConfig,Path=IsChecked,Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <DockPanel Grid.Row="1" Grid.Column="1" LastChildFill="False">
+                <TextBlock Text="配 置 标 题：" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center" />
+                <TextBlock Text="{Binding Config.Name}" VerticalAlignment="Center" />
+                <Button Content="编辑" Click="BtnEditConfig_Click" Margin="15,0,0,0" />
+            </DockPanel>
+            <DockPanel Grid.Row="2" Grid.Column="1">
+                <TextBlock Text="连接字符串：" Width="100" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Config.ConnString}" VerticalAlignment="Center" />
+            </DockPanel>
+        </Grid>
+    </Grid>
+</vm:BindableUserControl>

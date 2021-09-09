@@ -7,8 +7,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Threading;
-using SQLitePCL;
-using static SQLitePCL.raw;
+using SQLitePCL.Raw.Core;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace System.Data.SQLiteCipher
 {

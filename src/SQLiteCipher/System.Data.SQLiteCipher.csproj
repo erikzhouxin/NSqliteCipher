@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netcoreapp2.1;netstandard2.1;net45;net40;</TargetFrameworks>
+		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
 		<Description>SQLite数据库.Useful SQLite Database Process Utilities Based On Microsoft.Data.Sqlite.</Description>
 		<AssemblyName>NSystem.Data.SQLiteCipher</AssemblyName>
 		<RootNamespace>System.Data.SQLiteCipher</RootNamespace>
@@ -10,13 +10,15 @@
 		<LangVersion>latest</LangVersion>
 		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PackageDescription>系统出自对于Microsoft.Data.Sqlite.Core进行的修改，进行了部分处理、集成，提供了EricSink的Microsoft.Data.Sqlite.Core所做的工作，而且更具友好性，除提供默认的e_sqlcipher访问外，可根据SQLitePCLRaw.provider.*/SQLitePCLRaw.lib.*，然后手动RawCore.SetProvider进行设置。</PackageDescription>
+		<PackageTags>sqlite;sqlcipher;sqlitepcl;</PackageTags>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2021.9.8</Version>
-		<FileVersion>2021.9.8.616</FileVersion>
-		<AssemblyVersion>2021.9.8.616</AssemblyVersion>
+		<Version>2021.9.9</Version>
+		<FileVersion>2021.9.9.617</FileVersion>
+		<AssemblyVersion>2021.9.9.617</AssemblyVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 	</PropertyGroup>
@@ -34,11 +36,6 @@
 		<DefineConstants>TRACE;DEBUG;NETFx;NETStd</DefineConstants>
 		<DocumentationFile>bin\Debug\netstandard2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netstandard2.1</OutputPath>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp2.1'">
-		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Debug\netcoreapp2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
-		<OutputPath>bin\Debug\netcoreapp2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
@@ -65,11 +62,6 @@
 		<DocumentationFile>bin\Release\netstandard2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
 		<OutputPath>bin\Release\netstandard2.1</OutputPath>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp2.1'">
-		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Release\netcoreapp2.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
-		<OutputPath>bin\Release\netcoreapp2.1</OutputPath>
-	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
 		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
 		<DocumentationFile>bin\Release\netcoreapp3.1\NSystem.Data.SQLiteCipher.xml</DocumentationFile>
@@ -81,30 +73,18 @@
 		<OutputPath>bin\Release\net5.0</OutputPath>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net45'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.1'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.9" />
+	</ItemGroup>
 	<ItemGroup>
 		<None Update="SqliteConnection.CreateAggregate.tt">
 			<Generator>TextTemplatingFileGenerator</Generator>
@@ -115,7 +95,6 @@
 			<LastGenOutput>SqliteConnection.CreateFunction.cs</LastGenOutput>
 		</None>
 	</ItemGroup>
-
 	<ItemGroup>
 		<Compile Update="SqliteConnection.CreateAggregate.cs">
 			<DesignTime>True</DesignTime>
@@ -128,9 +107,7 @@
 			<DependentUpon>SqliteConnection.CreateFunction.tt</DependentUpon>
 		</Compile>
 	</ItemGroup>
-
 	<ItemGroup>
 	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
-
 </Project>

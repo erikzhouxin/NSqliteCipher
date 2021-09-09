@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;</TargetFrameworks>
 		<Description>SQLite数据库实体项目.Useful SQLite Database Entity Utilities Based On Microsoft.Data.Sqlite.</Description>
@@ -10,13 +10,15 @@
 		<LangVersion>latest</LangVersion>
 		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<PackageDescription>系统出自对于EFCore.Sqlite.Core进行的修改，进行了部分处理、集成，提供了EFCore.Sqlite.Core所做的工作，支持了自定义的SQLiteCipher，除提供默认的e_sqlcipher访问外，可根据SQLitePCLRaw.provider.*/SQLitePCLRaw.lib.*，然后手动RawCore.SetProvider进行设置。</PackageDescription>
+		<PackageTags>sqlite;sqlcipher;sqlitepcl;efcore;</PackageTags>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2021.9.8</Version>
-		<FileVersion>2021.9.8.616</FileVersion>
-		<AssemblyVersion>2021.9.8.616</AssemblyVersion>
+		<Version>2021.9.9</Version>
+		<FileVersion>2021.9.9.617</FileVersion>
+		<AssemblyVersion>2021.9.9.617</AssemblyVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 	</PropertyGroup>
@@ -51,28 +53,17 @@
 		<OutputPath>bin\Release\net5.0</OutputPath>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
-		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
-		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
-		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	</ItemGroup>
+	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="5.0.9" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.9" />
 		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="5.0.0" />
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.8" />
-		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.8" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.9" />
 	</ItemGroup>
 	<ItemGroup>
 	  <ProjectReference Include="..\SQLiteCipher\System.Data.SQLiteCipher.csproj" />

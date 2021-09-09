@@ -205,5 +205,14 @@ namespace TestWPFUI.SQLiteCipher
         {
             MainWindow.Instance.ContentLoading.HideMask();
         }
+
+        private void BtnOpenEFCore_Click(object sender, RoutedEventArgs e)
+        {
+            var home = new MenuViewModel("内置数据库", MainViewModel.DefaultFile, () => new EFCoreContent(MainViewModel.DefaultConfig))
+            {
+                Config = MainViewModel.DefaultConfig,
+            };
+            ViewModel.Selected = home;
+        }
     }
 }

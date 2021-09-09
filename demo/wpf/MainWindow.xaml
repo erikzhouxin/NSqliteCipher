@@ -59,6 +59,14 @@
                     </MenuItem.Icon>
                 </MenuItem>
             </MenuItem>
+            <MenuItem Header="EFCore">
+                <MenuItem Header="打开(O)" InputGestureText="Ctrl+O" Click="BtnOpenEFCore_Click">
+                    <MenuItem.Icon>
+                        <materialDesign:PackIcon Kind="FolderOpen" />
+                    </MenuItem.Icon>
+                </MenuItem>
+                <Separator/>
+            </MenuItem>
         </Menu>
         <ToolBarTray Grid.Row="1" Grid.ColumnSpan="3">
             <ToolBar Style="{DynamicResource MaterialDesignToolBar}" ClipToBounds="False">

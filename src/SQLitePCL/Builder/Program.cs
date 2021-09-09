@@ -28,6 +28,8 @@ namespace SQLitePCL.Raw.Builder
                 File.Delete(s);
             }
             gen_directory_build_props(Src, nupkgs_dir_name);
+            // 生成版本
+            ReplaceVersion(Path.GetFullPath(Path.Combine(Src, "Raw.Core", "SQLitePCL.Raw.Core.csproj")));
             // 生成包
             gen_nuspec_lib_e_sqlcipher(Src);
             // 编译发布
@@ -119,7 +121,7 @@ namespace SQLitePCL.Raw.Builder
         static string NUSPEC_VERSION { get; } = string.Format("{0:yyyy.M.d}", DateTime.Now);
         static string ASSEMBLY_VERSION { get; } = string.Format("{0:yyyy.M.d}.{1}", DateTime.Now, (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays);
         static string COPYRIGHT { get; } = $"Copyright 2020-{DateTime.Now.Year}";
-        static string AUTHORS { get; } = "ErikZhouXin EricSink";
+        static string AUTHORS { get; } = "EricSink ErikZhouXin";
         static string SUMMARY { get; } = "SQLitePCLRaw is a Portable Class Library (PCL) for low-level (raw) access to SQLite";
 
         private static void gen_directory_build_props(string root, string nupkgs_dir_name)
@@ -535,8 +537,11 @@ namespace SQLitePCL.Raw.Builder
 
                 f.WriteEndDocument();
             }
+        }
 
-            var coreProj = Path.GetFullPath(Path.Combine(dir_proj, proj + ".csproj"));
+        private static void ReplaceVersion(string projFile)
+        {
+            var coreProj = Path.GetFullPath(projFile);
             var content = File.ReadAllText(coreProj, Encoding.UTF8);
             // 忽略大小写
             Regex versionReg = new Regex(@"(<Version>)\d+[\.\d+]+(</Version>)", RegexOptions.IgnoreCase);

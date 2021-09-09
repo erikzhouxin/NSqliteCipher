@@ -54,7 +54,6 @@ namespace TestWPFUI.SQLiteCipher.Repository
     {
         public LocalDatabaseContext CreateDbContext(string[] args)
         {
-            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_e_sqlcipher());
             var optionsBuilder = new DbContextOptionsBuilder<LocalDatabaseContext>();
             optionsBuilder.UseSqlite("Data Source=test.db;Version=3;Password=2020");
             return new LocalDatabaseContext(optionsBuilder.Options);

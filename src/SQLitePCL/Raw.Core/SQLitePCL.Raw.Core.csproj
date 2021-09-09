@@ -1,58 +1,63 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net45;net40;</TargetFrameworks>
+		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
 		<AssemblyName>NSQLitePCL.Raw.Core</AssemblyName>
 		<RootNamespace>SQLitePCL.Raw.Core</RootNamespace>
-		<LangVersion>7.3</LangVersion>
+		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
-		<EnableDefaultCompileItems>false</EnableDefaultCompileItems>
-		<PackageDescription>SQLitePCL.raw is a Portable Class Library (PCL) for low-level (raw) access to SQLite.  This package does not provide an API which is friendly to app developers.  Rather, it provides an API which handles platform and configuration issues, upon which a friendlier API can be built.  In order to use this package, you will need to also add one of the SQLitePCLRaw.provider.* packages and call raw.SetProvider().  Convenience packages are named SQLitePCLRaw.bundle_*.</PackageDescription>
-		<Version>2021.9.8</Version>
-		<AssemblyVersion>2021.9.8.1410</AssemblyVersion>
-		<FileVersion>2021.9.8.1410</FileVersion>
+		<EnableDefaultCompileItems>True</EnableDefaultCompileItems>
+		<PackageDescription>系统出自对于SQLitePCLRaw.Core的修改，进行了部分处理、集成，提供了EricSink的SQLitePCLRaw.core/SQLitePCLRaw.provider.e_sqlcipher所做的工作，并相应做了调整以适应其他的SQLitePCLRaw.provider.*、SQLitePCLRaw.lib.*</PackageDescription>
+		<PackageTags>sqlite;sqlcipher;sqlitepcl;</PackageTags>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
+		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<Version>2021.9.9</Version>
+		<AssemblyVersion>2021.9.9.617</AssemblyVersion>
+		<FileVersion>2021.9.9.617</FileVersion>
+		<EmbedAllSources>true</EmbedAllSources>
+		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 	</PropertyGroup>
-		<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
-			<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
-			<DocumentationFile>bin\Debug\net40\SQLitePCLRaw.core.xml</DocumentationFile>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
-			<DefineConstants>TRACE;DEBUG;NETFrame;NET45</DefineConstants>
-			<DocumentationFile>bin\Debug\net45\SQLitePCLRaw.core.xml</DocumentationFile>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.0'">
-			<DefineConstants>TRACE;DEBUG;NETFx;NET45</DefineConstants>
-			<DocumentationFile>bin\Debug\netstandard2.0\SQLitePCLRaw.core.xml</DocumentationFile>
-		</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
+		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
+		<DocumentationFile>bin\Debug\net40\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
+		<DefineConstants>TRACE;DEBUG;NETFrame;NET45</DefineConstants>
+		<DocumentationFile>bin\Debug\net45\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.0'">
+		<DefineConstants>TRACE;DEBUG;NETFx</DefineConstants>
+		<DocumentationFile>bin\Debug\netstandard2.0\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\Debug\netcoreapp3.1\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NET50</DefineConstants>
+		<DocumentationFile>bin\Debug\net5.0\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
 		<DefineConstants>TRACE;NETFrame;NETS40</DefineConstants>
-		<DocumentationFile>bin\Release\net45\SQLitePCLRaw.core.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net45\SQLitePCL.Raw.Core.xml</DocumentationFile>
 	</PropertyGroup>
-		<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
-			<DefineConstants>TRACE;NETFrame;NET45</DefineConstants>
-			<DocumentationFile>bin\Release\net45\SQLitePCLRaw.core.xml</DocumentationFile>
-		</PropertyGroup>
-		<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.0'">
-			<DefineConstants>TRACE;NETFx;NETStd</DefineConstants>
-			<DocumentationFile>bin\Release\netstandard2.0\SQLitePCLRaw.core.xml</DocumentationFile>
-		</PropertyGroup>
-
-	<ItemGroup>
-		<Compile Include="batteries_v2.cs" />
-		<Compile Include="CompatAssist.cs" />
-		<Compile Include="provider_e_sqlcipher.cs" />
-		<Compile Include="raw.cs" />
-		<Compile Include="handles.cs" />
-		<Compile Include="isqlite3.cs" />
-		<Compile Include="util.cs" />
-		<Compile Include="utf8z.cs" />
-
-		<Compile Include="callbacks.cs" />
-
-		<Compile Include="attributes.cs" />
-		<Compile Include="IGetFunctionPointer.cs" />
-	</ItemGroup>
-
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
+		<DefineConstants>TRACE;NETFrame;NET45</DefineConstants>
+		<DocumentationFile>bin\Release\net45\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.0'">
+		<DefineConstants>TRACE;NETFx;NETStd</DefineConstants>
+		<DocumentationFile>bin\Release\netstandard2.0\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
+		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
+		<DocumentationFile>bin\Release\netcoreapp3.1\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0'">
+		<DefineConstants>TRACE;NETFx;NET50</DefineConstants>
+		<DocumentationFile>bin\Release\net5.0\SQLitePCL.Raw.Core.xml</DocumentationFile>
+	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net45'">
@@ -61,5 +66,10 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
 		<PackageReference Include="System.Memory" Version="4.5.3" />
 	</ItemGroup>
-
+	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+		<PackageReference Include="System.Memory" Version="4.5.3" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
+		<PackageReference Include="System.Memory" Version="4.5.3" />
+	</ItemGroup>
 </Project>

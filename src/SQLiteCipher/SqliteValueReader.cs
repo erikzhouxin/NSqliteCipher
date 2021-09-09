@@ -2,7 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.Text;
-using static SQLitePCL.raw;
+using static SQLitePCL.Raw.Core.RawCore;
 
 namespace System.Data.SQLiteCipher
 {

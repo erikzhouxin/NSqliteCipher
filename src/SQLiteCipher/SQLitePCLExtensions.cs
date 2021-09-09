@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using SQLitePCL;
+using SQLitePCL.Raw.Core;
 
 namespace System.Data.SQLiteCipher
 {
@@ -7,7 +7,7 @@ namespace System.Data.SQLiteCipher
     {
 #if !NET40 && !NET45
         public static bool EncryptionNotSupported()
-            => raw.GetNativeLibraryName() == "e_sqlite3";
+            => RawCore.GetNativeLibraryName() == "e_sqlite3";
 #endif
         private static readonly Dictionary<string, bool> _knownLibraries = new Dictionary<string, bool>
         {
@@ -22,7 +22,7 @@ namespace System.Data.SQLiteCipher
 
         public static bool? EncryptionSupported(out string libraryName)
         {
-            libraryName = raw.GetNativeLibraryName();
+            libraryName = RawCore.GetNativeLibraryName();
 
             return _knownLibraries.TryGetValue(libraryName, out var supported)
                 ? supported
