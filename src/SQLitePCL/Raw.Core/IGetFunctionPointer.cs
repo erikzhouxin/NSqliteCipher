@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 namespace SQLitePCL.Raw.Core
 {
     /// <summary>
+    /// 动态类型的提供者
     /// used by the dynamic providers
     /// </summary>
     public interface IGetFunctionPointer

@@ -23,5 +23,17 @@ namespace TestWPFUI.SQLiteCipher.Models
         /// 姓名
         /// </summary>
         public string Name { get; set; }
+        /// <summary>
+        /// 键
+        /// </summary>
+        public String Key { get; set; }
+        /// <summary>
+        /// 值
+        /// </summary>
+        public String Value { get; set; }
+        /// <summary>
+        /// 备注
+        /// </summary>
+        public String Remarks { get; set; }
     }
 }

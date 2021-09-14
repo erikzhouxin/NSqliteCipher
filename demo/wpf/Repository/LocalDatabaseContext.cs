@@ -40,7 +40,10 @@ namespace TestWPFUI.SQLiteCipher.Repository
             var dbOptions = new DbContextOptionsBuilder<LocalDatabaseContext>().UseSqlite(conn).Options;
             return dbOptions;
         }
-
+        /// <summary>
+        /// 模型创建
+        /// </summary>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<LocalTestEntity>();
@@ -50,12 +53,21 @@ namespace TestWPFUI.SQLiteCipher.Repository
         /// </summary>
         public virtual DbSet<LocalTestEntity> LocalTest { get; set; }
     }
+    /// <summary>
+    /// 
+    /// </summary>
     public class LocalDatabaseContextFactory : IDesignTimeDbContextFactory<LocalDatabaseContext>
     {
+        /// <summary>
+        /// 创建迁移
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public LocalDatabaseContext CreateDbContext(string[] args)
         {
+            var conn = SqliteConnectionPool.GetConnection("Data Source=bin\\LocalDatabaseMigration.db;Version=3;Password=2020");
             var optionsBuilder = new DbContextOptionsBuilder<LocalDatabaseContext>();
-            optionsBuilder.UseSqlite("Data Source=test.db;Version=3;Password=2020");
+            optionsBuilder.UseSqlite(conn);
             return new LocalDatabaseContext(optionsBuilder.Options);
         }
     }

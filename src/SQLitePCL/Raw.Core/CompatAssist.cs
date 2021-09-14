@@ -10,6 +10,13 @@ namespace SQLitePCL.Raw.Core
     internal static class CompatAssist
     {
 #if NET45 || NET40
+        /// <summary>
+        /// 获取字符串
+        /// </summary>
+        /// <param name="encoding"></param>
+        /// <param name="bytes"></param>
+        /// <param name="byteCount"></param>
+        /// <returns></returns>
         public static unsafe string GetString(this Encoding encoding, byte* bytes, int byteCount)
         {
             var byteArray = new byte[byteCount];
