@@ -1,13 +1,9 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Microsoft.EntityFrameworkCore.Utilities
+namespace System.Data.SQLiteEFCore
 {
     internal class Multigraph<TVertex, TEdge> : Graph<TVertex>
     {

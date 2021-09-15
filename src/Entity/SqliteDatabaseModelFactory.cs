@@ -1,6 +1,3 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,19 +6,16 @@ using System.Data.SQLiteCipher;
 using System.IO;
 using System.Linq;
 using System.Text;
-using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
-using Microsoft.EntityFrameworkCore.Sqlite.Internal;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Utilities;
 using static SQLitePCL.Raw.Core.RawCore;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Scaffolding.Internal
+namespace System.Data.SQLiteEFCore
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

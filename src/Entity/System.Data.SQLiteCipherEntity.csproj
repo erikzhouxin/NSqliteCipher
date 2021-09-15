@@ -16,9 +16,9 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2021.9.9</Version>
-		<FileVersion>2021.9.9.617</FileVersion>
-		<AssemblyVersion>2021.9.9.617</AssemblyVersion>
+		<Version>2021.9.15</Version>
+		<FileVersion>2021.9.15.623</FileVersion>
+		<AssemblyVersion>2021.9.15.623</AssemblyVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 	</PropertyGroup>
@@ -57,6 +57,18 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	</ItemGroup>
+	<ItemGroup>
+	  <Compile Remove="DisposableExtensions.cs" />
+	  <Compile Remove="ExpressionExtensions.cs" />
+	  <Compile Remove="Graph.cs" />
+	  <Compile Remove="MemberInfoExtensions.cs" />
+	  <Compile Remove="MethodInfoExtensions.cs" />
+	  <Compile Remove="Multigraph.cs" />
+	  <Compile Remove="NonCapturingLazyInitializer.cs" />
+	  <Compile Remove="PropertyInfoExtensions.cs" />
+	  <Compile Remove="ReferenceEqualityComparer.cs" />
+	  <Compile Remove="StringBuilderExtensions.cs" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="Microsoft.DotNet.PlatformAbstractions" Version="3.1.6" />

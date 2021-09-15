@@ -1,12 +1,7 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Sqlite.Metadata.Internal;
 
-// ReSharper disable once CheckNamespace
-namespace Microsoft.EntityFrameworkCore
+namespace System.Data.SQLiteEFCore
 {
     /// <summary>
     ///     Extension methods for <see cref="IProperty" /> for SQLite metadata.

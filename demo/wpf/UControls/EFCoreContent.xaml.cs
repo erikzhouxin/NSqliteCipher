@@ -22,6 +22,7 @@ using System.Data.Dabber;
 using CenIdea.Qualimetry.DbExcel;
 using System.Windows.Controls.Primitives;
 using TestWPFUI.SQLiteCipher.Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace TestWPFUI.SQLiteCipher.UControls
 {
@@ -66,7 +67,7 @@ namespace TestWPFUI.SQLiteCipher.UControls
                 {
                     using(var context = new LocalDatabaseContext(Config.ConnString))
                     {
-                        var count = context.LocalTest.Count();
+                        //var count = context.LocalTest.Count();
                         context.LocalTest.Add(new LocalTestEntity
                         {
                             ID = DateTime.Now.Ticks,

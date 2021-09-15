@@ -1,11 +1,7 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
-using System;
-using JetBrains.Annotations;
+﻿using System;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Diagnostics.Internal
+namespace System.Data.SQLiteEFCore
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to

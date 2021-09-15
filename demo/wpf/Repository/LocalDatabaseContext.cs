@@ -1,8 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Data.Cobber;
+using System.Data.Dabber;
 using System.Data.SQLiteCipher;
+using System.Data.SQLiteEFCore;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,11 +32,16 @@ namespace TestWPFUI.SQLiteCipher.Repository
         /// 初始构造
         /// </summary>
         /// <param name="options"></param>
-        public LocalDatabaseContext(DbContextOptions options) : base(options)
+        internal LocalDatabaseContext(DbContextOptions options) : base(options)
         {
-            if (Database.GetPendingMigrations().Any())
+            var key = GetKey(Database.GetConnectionString());
+            if (Cache.Get<bool>(key))
             {
-                Database.Migrate(); //执行迁移
+                if (Database.GetPendingMigrations().Any())
+                {
+                    Database.Migrate(); //执行迁移
+                }
+                Cache.Set<bool>(key, true);
             }
         }
         private static DbContextOptions GetOption(string connString)
@@ -49,9 +59,35 @@ namespace TestWPFUI.SQLiteCipher.Repository
             modelBuilder.Entity<LocalTestEntity>();
         }
         /// <summary>
+        /// 获取键
+        /// </summary>
+        /// <param name="connString"></param>
+        /// <returns></returns>
+        public static String GetKey(string connString)
+        {
+            return $"Context:{UserPassword.GetMd5Hash(connString)}";
+        }
+        /// <summary>
+        /// 缓存
+        /// </summary>
+        [NotMapped]
+        public ICacheModel Cache { get; } = new CacheDictionaryModel();
+        /// <summary>
         /// 本地测试类
         /// </summary>
         public virtual DbSet<LocalTestEntity> LocalTest { get; set; }
+        /// <summary>
+        /// 先回收连接
+        /// </summary>
+        public override void Dispose()
+        {
+            try
+            {
+                this.Database.GetDbConnection().Dispose();
+            }
+            catch { }
+            base.Dispose();
+        }
     }
     /// <summary>
     /// 

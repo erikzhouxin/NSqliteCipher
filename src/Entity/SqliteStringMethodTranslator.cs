@@ -1,18 +1,15 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Utilities;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
+namespace System.Data.SQLiteEFCore
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -121,7 +118,7 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
             if (_indexOfMethodInfo.Equals(method))
             {
                 var argument = arguments[0];
-                var stringTypeMapping = ExpressionExtensions.InferTypeMapping(instance, argument);
+                var stringTypeMapping = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions.InferTypeMapping(instance, argument);
 
                 return _sqlExpressionFactory.Subtract(
                     _sqlExpressionFactory.Function(
@@ -141,7 +138,7 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
             {
                 var firstArgument = arguments[0];
                 var secondArgument = arguments[1];
-                var stringTypeMapping = ExpressionExtensions.InferTypeMapping(instance, firstArgument, secondArgument);
+                var stringTypeMapping = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions.InferTypeMapping(instance, firstArgument, secondArgument);
 
                 return _sqlExpressionFactory.Function(
                     "replace",
@@ -221,7 +218,7 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
             if (_containsMethodInfo.Equals(method))
             {
                 var pattern = arguments[0];
-                var stringTypeMapping = ExpressionExtensions.InferTypeMapping(instance, pattern);
+                var stringTypeMapping = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions.InferTypeMapping(instance, pattern);
 
                 instance = _sqlExpressionFactory.ApplyTypeMapping(instance, stringTypeMapping);
                 pattern = _sqlExpressionFactory.ApplyTypeMapping(pattern, stringTypeMapping);
@@ -287,7 +284,7 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
 
         private SqlExpression TranslateStartsEndsWith(SqlExpression instance, SqlExpression pattern, bool startsWith)
         {
-            var stringTypeMapping = ExpressionExtensions.InferTypeMapping(instance, pattern);
+            var stringTypeMapping = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions.InferTypeMapping(instance, pattern);
 
             instance = _sqlExpressionFactory.ApplyTypeMapping(instance, stringTypeMapping);
             pattern = _sqlExpressionFactory.ApplyTypeMapping(pattern, stringTypeMapping);

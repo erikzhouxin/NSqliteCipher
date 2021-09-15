@@ -1,18 +1,15 @@
-// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
-
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Utilities;
 
-namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
+namespace System.Data.SQLiteEFCore
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -88,7 +85,7 @@ namespace Microsoft.EntityFrameworkCore.Sqlite.Query.Internal
                 if (string.Equals(sqlFunctionName, "max")
                     || string.Equals(sqlFunctionName, "max"))
                 {
-                    typeMapping = ExpressionExtensions.InferTypeMapping(arguments[0], arguments[1]);
+                    typeMapping = Microsoft.EntityFrameworkCore.Query.ExpressionExtensions.InferTypeMapping(arguments[0], arguments[1]);
                     newArguments = new List<SqlExpression>
                     {
                         _sqlExpressionFactory.ApplyTypeMapping(arguments[0], typeMapping),

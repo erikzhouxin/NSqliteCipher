@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Cobber;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -205,14 +206,24 @@ namespace TestWPFUI.SQLiteCipher
         {
             MainWindow.Instance.ContentLoading.HideMask();
         }
-
-        private void BtnOpenEFCore_Click(object sender, RoutedEventArgs e)
+        private LazyBone<MenuViewModel> _contextModel = new LazyBone<MenuViewModel> (()=>
         {
-            var home = new MenuViewModel("内置数据库", MainViewModel.DefaultFile, () => new EFCoreContent(MainViewModel.DefaultConfig))
+            return new MenuViewModel("内置数据库", MainViewModel.DefaultFile, () => new EFCoreContent(MainViewModel.DefaultConfig))
             {
                 Config = MainViewModel.DefaultConfig,
             };
-            ViewModel.Selected = home;
+        });
+        private void BtnOpenEFCore_Click(object sender, RoutedEventArgs e)
+        {
+            var cache = new CacheConcurrentModel();
+            var distTicks = 100000000;
+            var key = (DateTime.Now.Ticks / distTicks).ToString();
+            if (!cache.Get<bool>(key))
+            {
+                cache.Set(key, true, new DateTimeOffset(DateTime.Now.AddTicks(distTicks)));
+                _contextModel.Reload();
+            }
+            ViewModel.Selected = _contextModel.Value;
         }
     }
 }
