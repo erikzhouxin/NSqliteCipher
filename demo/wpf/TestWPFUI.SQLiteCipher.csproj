@@ -54,7 +54,8 @@
 		<PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
-		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.1" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.15" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="2021.9.15" />
 		<Reference Include="ReachFramework" />
 		<Reference Include="PresentationCore" />
 		<Reference Include="PresentationFramework" />
@@ -72,7 +73,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
-		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.1" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.15" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="2021.9.15" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0-windows'">
@@ -85,7 +87,8 @@
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.9" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="NPOI" Version="2.5.1" />
-		<PackageReference Include="NSystem.Data.Dabber" Version="1.0.1" />
+		<PackageReference Include="NSQLitePCL.Raw.Liber" Version="2021.9.15" />
+		<PackageReference Include="NSystem.Data.Dabber" Version="2021.9.15" />
 		<PackageReference Include="System.Runtime" Version="4.3.1" />
 	</ItemGroup>
 	<ItemGroup>

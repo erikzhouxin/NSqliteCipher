@@ -10,18 +10,18 @@
 		<LangVersion>latest</LangVersion>
 		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-		<PackageDescription>系统出自对于Microsoft.Data.Sqlite.Core进行的修改，进行了部分处理、集成，提供了EricSink的Microsoft.Data.Sqlite.Core所做的工作，而且更具友好性，除提供默认的e_sqlcipher访问外，可根据SQLitePCLRaw.provider.*/SQLitePCLRaw.lib.*，然后手动RawCore.SetProvider进行设置。</PackageDescription>
+		<PackageDescription>系统出自对于Microsoft.Data.Sqlite.Core进行的修改，进行了部分处理、集成，提供了Microsoft.Data.Sqlite.Core所做的工作，而且更具友好性，除提供默认的e_sqlcipher访问外，可根据SQLitePCLRaw.provider.*/SQLitePCLRaw.lib.*，然后手动RawCore.SetProvider进行设置。</PackageDescription>
 		<PackageTags>sqlite;sqlcipher;sqlitepcl;</PackageTags>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Version>2021.9.15</Version>
 		<FileVersion>2021.9.15.623</FileVersion>
 		<AssemblyVersion>2021.9.15.623</AssemblyVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
-		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
@@ -64,7 +64,7 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.9" />
+		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.15" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="SqliteConnection.CreateAggregate.tt">
@@ -89,6 +89,6 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-	  <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+		<Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
 	</ItemGroup>
 </Project>

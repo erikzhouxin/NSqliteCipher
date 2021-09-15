@@ -10,13 +10,14 @@
 		<PackageTags>sqlite;sqlcipher;sqlitepcl;</PackageTags>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
-		<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<Version>2021.9.15</Version>
 		<AssemblyVersion>2021.9.15.623</AssemblyVersion>
 		<FileVersion>2021.9.15.623</FileVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net40'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET40</DefineConstants>
