@@ -1,11 +1,37 @@
-.vs
-.vscode
-.publishes
-.svn
-.git
-
-bin
-obj
-
+# find . -type d -empty -exec touch {}/.gitignore \;
+# git config --global credential.helper store
+# git config core.sparseCheckout true
+# temp Files
 *.suo
 *.user
+*.log
+*.temp
+~$*.doc
+~$*.docx
+~$*.xls
+~$*.xlsx
+.classpath
+.factorypath
+.project
+UpgradeLog.htm
+# temp Folder
+.vs
+.git
+.svn
+.eclipse
+.vscode
+.idea
+.publishes
+.settings
+# temp Binary
+bin
+obj
+packages
+target
+# temp User
+App_Data
+tests
+TestResults
+Log
+Temp
+Upload

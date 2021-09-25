@@ -16,9 +16,9 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2021.9.15</Version>
-		<FileVersion>2021.9.15.623</FileVersion>
-		<AssemblyVersion>2021.9.15.623</AssemblyVersion>
+		<Version>2021.10.1</Version>
+		<FileVersion>2021.10.1.639</FileVersion>
+		<AssemblyVersion>2021.10.1.639</AssemblyVersion>
 		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
