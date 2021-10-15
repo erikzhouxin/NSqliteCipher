@@ -68,9 +68,12 @@ namespace System.Data.SQLiteCipher
             // 定时清理连接池
             _clearTimer.Elapsed += (s, e) =>
             {
-                if (_connPool.TryDequeue(out SQLiteConnection curr))
+                if(_connPool.Count > 1)
                 {
-                    curr.Release();
+                    if (_connPool.TryDequeue(out SQLiteConnection curr))
+                    {
+                        curr.Release();
+                    }
                 }
             };
             _clearTimer.Start();
