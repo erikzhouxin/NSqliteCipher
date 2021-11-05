@@ -65,14 +65,6 @@ namespace SQLitePCL.Raw.Builder
         }
 
         #region // MSBuilder
-        public static string get_build_prop(string p)
-        {
-            var path_xml = Path.Combine(Src, "Directory.Build.props");
-            var xml = XElement.Load(path_xml);
-            var props = xml.Elements(XName.Get("PropertyGroup")).First();
-            var ver = props.Elements(XName.Get(p)).First();
-            return ver.Value;
-        }
         public static void Exec(string fileName, string args, string startDir)
         {
             var wd = System.IO.Path.GetFullPath(startDir);
@@ -139,7 +131,7 @@ namespace SQLitePCL.Raw.Builder
                 f.WriteStartElement("PropertyGroup");
 
                 f.WriteElementString("Copyright", COPYRIGHT);
-                f.WriteElementString("Company", "SourceGear");
+                f.WriteElementString("Company", "EZhouXin");
                 f.WriteElementString("Authors", AUTHORS);
                 f.WriteElementString("Version", NUSPEC_VERSION);
                 f.WriteElementString("AssemblyVersion", ASSEMBLY_VERSION);
@@ -559,35 +551,6 @@ namespace SQLitePCL.Raw.Builder
             f.WriteAttributeString("type", "expression");
             f.WriteString("Apache-2.0");
             f.WriteEndElement();
-        }
-
-        enum WhichProvider
-        {
-            E_SQLITE3,
-            E_SQLCIPHER,
-            SQLCIPHER,
-            INTERNAL,
-            SQLITE3,
-            WINSQLITE3,
-            DYNAMIC_CDECL,
-            DYNAMIC_STDCALL,
-        }
-
-        static string AsString(this WhichProvider e)
-        {
-            switch (e)
-            {
-                case WhichProvider.E_SQLITE3: return "e_sqlite3";
-                case WhichProvider.E_SQLCIPHER: return "e_sqlcipher";
-                case WhichProvider.SQLCIPHER: return "sqlcipher";
-                case WhichProvider.INTERNAL: return "internal";
-                case WhichProvider.SQLITE3: return "sqlite3";
-                case WhichProvider.WINSQLITE3: return "winsqlite3";
-                case WhichProvider.DYNAMIC_CDECL: return "dynamic_cdecl";
-                case WhichProvider.DYNAMIC_STDCALL: return "dynamic_stdcall";
-                default:
-                    throw new NotImplementedException(string.Format("WhichProvider.AsString for {0}", e));
-            }
         }
 
         enum WhichLib
