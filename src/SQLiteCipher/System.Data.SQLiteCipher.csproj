@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
+		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
 		<Description>SQLite数据库.Useful SQLite Database Process Utilities Based On Microsoft.Data.Sqlite.</Description>
 		<AssemblyName>NSystem.Data.SQLiteCipher</AssemblyName>
 		<RootNamespace>System.Data.SQLiteCipher</RootNamespace>
@@ -19,7 +19,6 @@
 		<Version>2021.10.1</Version>
 		<FileVersion>2021.10.1.639</FileVersion>
 		<AssemblyVersion>2021.10.1.639</AssemblyVersion>
-		<EmbedAllSources>true</EmbedAllSources>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
@@ -38,6 +37,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NET50</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net6.0'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NET60</DefineConstants>
+	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net40'">
 		<DefineConstants>TRACE;NETFrame;NET40</DefineConstants>
 	</PropertyGroup>
@@ -53,6 +55,9 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0'">
 		<DefineConstants>TRACE;NETFx;NET50</DefineConstants>
 	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net6.0'">
+		<DefineConstants>TRACE;NETFx;NET60</DefineConstants>
+	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net40'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net45'">
@@ -62,6 +67,8 @@
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="NSQLitePCL.Raw.Core" Version="2021.9.15" />

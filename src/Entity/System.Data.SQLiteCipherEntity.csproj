@@ -1,10 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net5.0;netcoreapp3.1;netstandard2.1;</TargetFrameworks>
+		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netstandard2.1;</TargetFrameworks>
 		<Description>SQLite数据库实体项目.Useful SQLite Database Entity Utilities Based On Microsoft.Data.Sqlite.</Description>
-		<AssemblyName>NSystem.Data.SQLiteCipherEntity</AssemblyName>
-		<RootNamespace>System.Data.SQLiteCipherEntity</RootNamespace>
-		<AssemblyTitle>NSystem.Data.SQLiteCipherEntity</AssemblyTitle>
+		<AssemblyName>NSystem.Data.SQLiteEFCore</AssemblyName>
+		<RootNamespace>System.Data.SQLiteEFCore</RootNamespace>
+		<AssemblyTitle>NSystem.Data.SQLiteEFCore</AssemblyTitle>
 		<Authors>ErikZhouXin</Authors>
 		<SignAssembly>true</SignAssembly>
 		<LangVersion>latest</LangVersion>
@@ -16,48 +16,59 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2021.10.1</Version>
-		<FileVersion>2021.10.1.639</FileVersion>
-		<AssemblyVersion>2021.10.1.639</AssemblyVersion>
-		<EmbedAllSources>true</EmbedAllSources>
+		<Version>2021.11.11</Version>
+		<FileVersion>2021.11.11.639</FileVersion>
+		<AssemblyVersion>2021.11.11.639</AssemblyVersion>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netstandard2.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETStd</DefineConstants>
-		<DocumentationFile>bin\Debug\netstandard2.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\netstandard2.1\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netstandard2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Debug\netcoreapp3.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\netcoreapp3.1\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Debug\netcoreapp3.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NET50</DefineConstants>
-		<DocumentationFile>bin\Debug\net5.0\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Debug\net5.0\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Debug\net5.0</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net6.0'">
+		<DefineConstants>TRACE;DEBUG;NETFx;NET60</DefineConstants>
+		<DocumentationFile>bin\Debug\net6.0\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
+		<OutputPath>bin\Debug\net6.0</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netstandard2.1'">
 		<DefineConstants>TRACE;NETFx;NETStd</DefineConstants>
-		<DocumentationFile>bin\Release\netstandard2.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\netstandard2.1\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Release\netstandard2.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
 		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\Release\netcoreapp3.1\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\netcoreapp3.1\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Release\netcoreapp3.1</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0'">
 		<DefineConstants>TRACE;NETFx;NET50</DefineConstants>
-		<DocumentationFile>bin\Release\net5.0\NSystem.Data.SQLiteCipherEntity.xml</DocumentationFile>
+		<DocumentationFile>bin\Release\net5.0\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
 		<OutputPath>bin\Release\net5.0</OutputPath>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net6.0'">
+		<DefineConstants>TRACE;NETFx;NET60</DefineConstants>
+		<DocumentationFile>bin\Release\net6.0\NSystem.Data.SQLiteEFCore.xml</DocumentationFile>
+		<OutputPath>bin\Release\net6.0</OutputPath>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.1'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp3.1'">
 	</ItemGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net5.0'">
+	</ItemGroup>
+	<ItemGroup Condition="'$(TargetFramework)' == 'net6.0'">
 	</ItemGroup>
 	<ItemGroup>
 	  <Compile Remove="DisposableExtensions.cs" />
