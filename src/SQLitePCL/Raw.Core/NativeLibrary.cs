@@ -12,7 +12,7 @@ namespace SQLitePCL.Raw.Core
         public const int WHERE_PLAIN = 0x01;
         public const int WHERE_RUNTIME_RID = 0x02;
         public const int WHERE_ARCH = 0x04;
-#if NET50 || NETCore
+#if NET50 || NET60 || NETCore
         public static IntPtr Load(string libraryName, System.Reflection.Assembly assy, int flags)
         {
             // TODO convert flags

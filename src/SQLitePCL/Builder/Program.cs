@@ -47,7 +47,7 @@ namespace SQLitePCL.Raw.Builder
             {
                 var dir = Path.Combine(Program.Src, s.Key);
                 Exec("dotnet", "restore", dir);
-                Exec(@"C:\Program Files\Microsoft Visual Studio 2019\MSBuild\Current\Bin\msbuild.exe", "/p:Configuration=Release /t:pack", dir);
+                Exec(@"C:\Program Files\Microsoft Visual Studio 2022\MSBuild\Current\Bin\msbuild.exe", "/p:Configuration=Release /t:pack", dir);
             }
             var nuspecs = new Dictionary<string, string> {
                 { "Lib", "SQLitePCL.Raw.Liber" },
@@ -110,8 +110,8 @@ namespace SQLitePCL.Raw.Builder
         }
         #endregion
         #region // Version
-        static string NUSPEC_VERSION { get; } = string.Format("{0:yyyy.M.d}", DateTime.Now);
-        static string ASSEMBLY_VERSION { get; } = string.Format("{0:yyyy.M.d}.{1}", DateTime.Now, (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays);
+        static string NUSPEC_VERSION { get; } = new DateTime(2022, 6, 6).ToString("yyyy.M.d"); //= string.Format("{0:yyyy.M.d}", DateTime.Now);
+        static string ASSEMBLY_VERSION { get; } = string.Format("{0:yyyy.M.d}.666", new DateTime(2022, 6, 6), (int)(DateTime.Now - new DateTime(2020, 1, 1)).TotalDays);
         static string COPYRIGHT { get; } = $"Copyright 2020-{DateTime.Now.Year}";
         static string AUTHORS { get; } = "EricSink ErikZhouXin";
         static string SUMMARY { get; } = "SQLitePCLRaw is a Portable Class Library (PCL) for low-level (raw) access to SQLite";
@@ -172,6 +172,7 @@ namespace SQLitePCL.Raw.Builder
             NET50,
             NET40,
             NET45,
+            NET60,
         }
 
         enum LibSuffix
@@ -248,6 +249,7 @@ namespace SQLitePCL.Raw.Builder
                 case TFM.NET461: return "net461";
                 case TFM.NETCOREAPP31: return "netcoreapp3.1";
                 case TFM.NET50: return "net5.0";
+                case TFM.NET60: return "net6.0";
                 case TFM.NET40: return "net40";
                 case TFM.NET45: return "net45";
                 default:
@@ -424,6 +426,8 @@ namespace SQLitePCL.Raw.Builder
         {
             write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "x86", "win-x86", f);
             write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "x64", "win-x64", f);
+            write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "x86", "x86", f);
+            write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "x64", "x64", f);
             write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "arm", "win-arm", f);
             write_nuspec_file_entry_native_win(lib, win_toolset, "plain", "arm64", "win-arm64", f);
             write_nuspec_file_entry_native_uwp(lib, win_toolset, "appcontainer", "arm64", "win10-arm64", f);
@@ -579,6 +583,10 @@ namespace SQLitePCL.Raw.Builder
             {
                 return LibSuffix.SO;
             }
+            else if (front == "x86" || front == "x64")
+            {
+                return LibSuffix.DLL;
+            }
             else
             {
                 throw new NotImplementedException();
@@ -619,7 +627,10 @@ namespace SQLitePCL.Raw.Builder
                 f.WriteAttributeString("Condition", " '$(RuntimeIdentifier)' == '' AND '$(OS)' == 'Windows_NT' ");
                 write_nuget_target_item("win-x86", lib, f);
                 write_nuget_target_item("win-x64", lib, f);
+                write_nuget_target_item("x86", lib, f);
+                write_nuget_target_item("x64", lib, f);
                 write_nuget_target_item("win-arm", lib, f);
+                write_nuget_target_item("win-arm64", lib, f);
                 f.WriteEndElement(); // ItemGroup
 
                 f.WriteStartElement("ItemGroup");
@@ -634,7 +645,7 @@ namespace SQLitePCL.Raw.Builder
                 write_nuget_target_item("linux-arm", lib, f);
                 write_nuget_target_item("linux-armel", lib, f);
                 write_nuget_target_item("linux-arm64", lib, f);
-                write_nuget_target_item("linux-x64", lib, f);
+                //write_nuget_target_item("linux-x64", lib, f);
                 write_nuget_target_item("linux-mips64", lib, f);
                 write_nuget_target_item("linux-s390x", lib, f);
                 f.WriteEndElement(); // ItemGroup

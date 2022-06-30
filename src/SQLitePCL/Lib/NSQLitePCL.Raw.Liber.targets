@@ -12,8 +12,23 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>false</Pack>
     </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\x86\native\e_sqlcipher.dll">
+      <Link>runtimes\x86\native\e_sqlcipher.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>false</Pack>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\x64\native\e_sqlcipher.dll">
+      <Link>runtimes\x64\native\e_sqlcipher.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>false</Pack>
+    </Content>
     <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-arm\native\e_sqlcipher.dll">
       <Link>runtimes\win-arm\native\e_sqlcipher.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>false</Pack>
+    </Content>
+    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\win-arm64\native\e_sqlcipher.dll">
+      <Link>runtimes\win-arm64\native\e_sqlcipher.dll</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>false</Pack>
     </Content>
@@ -48,11 +63,6 @@
     </Content>
     <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\linux-arm64\native\libe_sqlcipher.so">
       <Link>runtimes\linux-arm64\native\libe_sqlcipher.so</Link>
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <Pack>false</Pack>
-    </Content>
-    <Content Include="$(MSBuildThisFileDirectory)..\..\runtimes\linux-x64\native\libe_sqlcipher.so">
-      <Link>runtimes\linux-x64\native\libe_sqlcipher.so</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <Pack>false</Pack>
     </Content>

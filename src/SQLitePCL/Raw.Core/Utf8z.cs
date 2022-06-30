@@ -24,7 +24,15 @@ namespace SQLitePCL.Raw.Core
         /// <returns></returns>
         public ref readonly byte GetPinnableReference()
         {
-            return ref sp[0];
+            if (sp != null && sp.Length > 0)
+            {
+                return ref sp[0];
+            }
+            unsafe
+            {
+                byte* ptr = default;
+                return ref *ptr;
+            }
         }
         Utf8z(byte[] a)
         {
@@ -201,7 +209,7 @@ namespace SQLitePCL.Raw.Core
                 var re = new byte[len + 1];
                 for (int i = 0; i < len; i++)
                 {
-                    re[i]=p[i];
+                    re[i] = p[i];
                 }
                 return FromSpan(re);
             }
@@ -215,7 +223,7 @@ namespace SQLitePCL.Raw.Core
             }
             else
             {
-                return new Utf8z(find_zero_terminator((byte*) (p.ToPointer())));
+                return new Utf8z(find_zero_terminator((byte*)(p.ToPointer())));
             }
         }
 #else

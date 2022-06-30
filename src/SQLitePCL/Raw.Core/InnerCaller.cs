@@ -17,7 +17,7 @@ namespace SQLitePCL.Raw.Core
 
         public static byte[] ToUtf8WithZ(this string sourceText)
         {
-            if (sourceText == null) { return null; }
+            if (sourceText == null) { return new byte[] { }; }
             int nlen = Encoding.UTF8.GetByteCount(sourceText);
             var byteArray = new byte[nlen + 1];
             var wrote = Encoding.UTF8.GetBytes(sourceText, 0, sourceText.Length, byteArray, 0);

@@ -287,13 +287,13 @@ namespace System.Data.SQLiteCipher
                     filename = Path.Combine(dataDirectory, filename);
                 }
             }
-
-            var rc = sqlite3_open_v2(filename, out _db, flags, vfs: null);
-            SqliteException.ThrowExceptionForRC(rc, _db);
-
-            _state = ConnectionState.Open;
             try
             {
+                var rc = sqlite3_open_v2(filename, out _db, flags, vfs: null);
+
+                SqliteException.ThrowExceptionForRC(rc, _db);
+
+                _state = ConnectionState.Open;
                 if (!string.IsNullOrEmpty(ConnectionOptions.Password))
                 {
                     if (SQLitePCLExtensions.EncryptionSupported(out var libraryName) == false)
@@ -382,16 +382,15 @@ namespace System.Data.SQLiteCipher
                     SqliteException.ThrowExceptionForRC(rc, _db);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                _db.Dispose();
+                _db?.Dispose();
                 _db = null;
 
                 _state = ConnectionState.Closed;
 
-                throw;
+                throw ex;
             }
-
             OnStateChange(new StateChangeEventArgs(ConnectionState.Closed, ConnectionState.Open));
         }
 
