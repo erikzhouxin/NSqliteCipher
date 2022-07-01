@@ -47,7 +47,7 @@ namespace SQLitePCL.Raw.Core
         /// terminates with a <c>\0</c> byte.  The span passed in must include the <c>\0</c> terminator.
         /// <para/>
         /// Both <see langword="null"/> and empty strings can be created here.  To create a <see langword="null"/> string,
-        /// pass in an empty <see cref="ReadOnlySpan{T}"/>.  To create an empty string, pass in a span with length 1, that
+        /// pass in an empty byte array.  To create an empty string, pass in a span with length 1, that
         /// only contains a <c>\0</c>
         /// </summary>
         /// <exception cref="ArgumentException">
@@ -64,7 +64,11 @@ namespace SQLitePCL.Raw.Core
             }
             return new Utf8z(span);
         }
-
+        /// <summary>
+        /// 来自字符串
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static Utf8z FromString(string s)
         {
             if (s == null)
@@ -80,13 +84,16 @@ namespace SQLitePCL.Raw.Core
 #else
         readonly ReadOnlySpan<byte> sp;
         /// <summary>
-        /// 
+        /// 获取指针
         /// </summary>
         /// <returns></returns>
         public ref readonly byte GetPinnableReference()
         {
             return ref sp.GetPinnableReference();
         }
+        /// <summary>
+        /// 构造
+        /// </summary>
         Utf8z(ReadOnlySpan<byte> a)
         {
             // no check here.  anything that calls this
@@ -117,17 +124,14 @@ namespace SQLitePCL.Raw.Core
             }
             return new Utf8z(span);
         }
-
+        /// <summary>
+        /// 来自字符串
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static Utf8z FromString(string s)
         {
-            if (s == null)
-            {
-                return new Utf8z(ReadOnlySpan<byte>.Empty);
-            }
-            else
-            {
-                return new Utf8z(s.ToUtf8WithZ());
-            }
+            return new Utf8z(s == null ? ReadOnlySpan<byte>.Empty : s.ToUtf8WithZ());
         }
 
 #endif
@@ -214,31 +218,28 @@ namespace SQLitePCL.Raw.Core
                 return FromSpan(re);
             }
         }
-
-        unsafe public static Utf8z FromIntPtr(IntPtr p)
+        /// <summary>
+        /// 来自句柄
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        public static unsafe Utf8z FromIntPtr(IntPtr p)
         {
-            if (p == IntPtr.Zero)
-            {
-                return new Utf8z(new byte[] { });
-            }
-            else
-            {
-                return new Utf8z(find_zero_terminator((byte*)(p.ToPointer())));
-            }
+            return new Utf8z(p == IntPtr.Zero ? new byte[] { } : find_zero_terminator((byte*)(p.ToPointer())));
         }
 #else
         // TODO maybe remove this and just use FromSpan?
 
         /// <summary>
-        /// Creates a new instance of <see cref="utf8z"/> which directly points at the memory pointed to by <paramref
+        /// Creates a new instance of <see cref="Utf8z"/> which directly points at the memory pointed to by <paramref
         /// name="p"/> with length <paramref name="len"/>. The pointer must be to a valid <see cref="Encoding.UTF8"/>
         /// encoded block of memory that terminates with a <c>\0</c> byte.  The <paramref name="len"/> value refers to
         /// the number of bytes in the utf8 encoded value <em>not</em> including the <c>\0</c> byte terminator.
         /// <para/>
         /// <paramref name="p"/> can be <see langword="null"/>, in which case <paramref name="len"/> is ignored
-        /// and a new <see cref="utf8z"/> instance is created that represents <see langword="null"/>.  Note that this
+        /// and a new <see cref="Utf8z"/> instance is created that represents <see langword="null"/>.  Note that this
         /// different from a pointer to a single <c>\0</c> byte and a length of one.  That would represent an empty <see
-        /// cref="utf8z"/> string.
+        /// cref="Utf8z"/> string.
         /// </summary>
         /// <exception cref="ArgumentException">
         /// Thrown if <paramref name="p"/> is not <see langword="null"/> and <c>p[len]</c> is not <c>\0</c>.
@@ -256,7 +257,11 @@ namespace SQLitePCL.Raw.Core
                 return FromSpan(sp);
             }
         }
-
+        /// <summary>
+        /// 来自句柄
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
         unsafe public static Utf8z FromIntPtr(IntPtr p)
         {
             if (p == IntPtr.Zero)
@@ -265,10 +270,14 @@ namespace SQLitePCL.Raw.Core
             }
             else
             {
-                return new Utf8z(find_zero_terminator((byte*) (p.ToPointer())));
+                return new Utf8z(find_zero_terminator((byte*)(p.ToPointer())));
             }
         }
 #endif
+        /// <summary>
+        /// 转换成字符串
+        /// </summary>
+        /// <returns></returns>
         public string utf8_to_string()
         {
             if (sp.Length == 0)
@@ -289,14 +298,14 @@ namespace SQLitePCL.Raw.Core
         /// Gets the <see cref="Encoding.UTF8"/> encoded bytes for the provided <paramref name="value"/>.  The array
         /// will include a trailing <c>\0</c> character.  The length of the array will <see cref="Encoding.UTF8"/>'s
         /// <see cref="Encoding.GetByteCount(string)"/><c>+1</c> (for the trailing <c>\0</c> byte).  These bytes are
-        /// suitable to use with <see cref="FromSpan"/> using the extension <see
-        /// cref="MemoryExtensions.AsSpan{T}(T[])"/> or <see cref="FromPtr(byte*)"/> or <see cref="FromPtrLen(byte*,
+        /// suitable to use with <see cref="FromSpan"/> using the extension see
+        /// MemoryExtensions.AsSpan{T}(T[]) or <see cref="FromPtr(byte*)"/> or <see cref="FromPtrLen(byte*,
         /// int)"/>.  Note that for <see cref="FromPtrLen(byte*, int)"/> the length provided should not include the
         /// trailing <c>\0</c> terminator.
         /// </summary>
         public static byte[] GetZeroTerminatedUTF8Bytes(string value)
         {
-            return InnerCaller.ToUtf8WithZ(value);
+            return CompatAssist.ToUtf8WithZ(value);
         }
     }
 }

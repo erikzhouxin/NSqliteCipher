@@ -7,30 +7,74 @@ using System.Text;
 
 namespace SQLitePCL.Raw.Core
 {
+    /// <summary>
+    /// 原生类库
+    /// </summary>
     public static partial class NativeLibrary
     {
+        /// <summary>
+        /// where内容
+        /// </summary>
         public const int WHERE_PLAIN = 0x01;
+        /// <summary>
+        /// where运行环境行标识
+        /// </summary>
         public const int WHERE_RUNTIME_RID = 0x02;
+        /// <summary>
+        /// where架构
+        /// </summary>
         public const int WHERE_ARCH = 0x04;
 #if NET50 || NET60 || NETCore
+        /// <summary>
+        /// 加载程序集
+        /// </summary>
+        /// <param name="libraryName"></param>
+        /// <param name="assy"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
         public static IntPtr Load(string libraryName, System.Reflection.Assembly assy, int flags)
         {
             // TODO convert flags
             return System.Runtime.InteropServices.NativeLibrary.Load(libraryName, assy, null);
         }
+        /// <summary>
+        /// 尝试加载程序集
+        /// </summary>
+        /// <param name="libraryName"></param>
+        /// <param name="assy"></param>
+        /// <param name="flags"></param>
+        /// <param name="handle"></param>
+        /// <returns></returns>
         public static bool TryLoad(string libraryName, System.Reflection.Assembly assy, int flags, out IntPtr handle)
         {
             // TODO convert flags
             return System.Runtime.InteropServices.NativeLibrary.TryLoad(libraryName, assy, null, out handle);
         }
+        /// <summary>
+        /// 获取导出句柄
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
         public static IntPtr GetExport(IntPtr handle, string name)
         {
             return System.Runtime.InteropServices.NativeLibrary.GetExport(handle, name);
         }
+        /// <summary>
+        /// 尝试获取导出句柄
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="name"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool TryGetExport(IntPtr handle, string name, out IntPtr address)
         {
             return System.Runtime.InteropServices.NativeLibrary.TryGetExport(handle, name, out address);
         }
+        /// <summary>
+        /// 释放句柄
+        /// </summary>
+        /// <param name="handle"></param>
         public static void Free(IntPtr handle)
         {
             System.Runtime.InteropServices.NativeLibrary.Free(handle);
@@ -80,7 +124,14 @@ namespace SQLitePCL.Raw.Core
             win,
             dlopen,
         }
-
+        /// <summary>
+        /// 加载
+        /// </summary>
+        /// <param name="libraryName"></param>
+        /// <param name="assy"></param>
+        /// <param name="flags"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static IntPtr Load(string libraryName, System.Reflection.Assembly assy, int flags)
         {
             var logWriter = new StringWriter();
@@ -108,6 +159,13 @@ namespace SQLitePCL.Raw.Core
                 throw new NotImplementedException();
             }
         }
+        /// <summary>
+        /// 获取导出
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public static IntPtr GetExport(IntPtr handle, string name)
         {
             var h = MyGetExport(handle, name);
@@ -117,6 +175,11 @@ namespace SQLitePCL.Raw.Core
             }
             return h;
         }
+        /// <summary>
+        /// 释放
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <exception cref="NotImplementedException"></exception>
         public static void Free(IntPtr handle)
         {
             var plat = WhichLoader();
@@ -133,19 +196,40 @@ namespace SQLitePCL.Raw.Core
                 throw new NotImplementedException();
             }
         }
+        /// <summary>
+        /// 尝试加载
+        /// </summary>
+        /// <param name="libraryName"></param>
+        /// <param name="assy"></param>
+        /// <param name="flags"></param>
+        /// <param name="handle"></param>
+        /// <returns></returns>
         public static bool TryLoad(string libraryName, System.Reflection.Assembly assy, int flags, out IntPtr handle)
         {
             var h = MyLoad(libraryName, assy, flags, s => { });
             handle = h;
             return h != IntPtr.Zero;
         }
+        /// <summary>
+        /// 尝试导出
+        /// </summary>
+        /// <param name="handle"></param>
+        /// <param name="name"></param>
+        /// <param name="address"></param>
+        /// <returns></returns>
         public static bool TryGetExport(IntPtr handle, string name, out IntPtr address)
         {
             var h = MyGetExport(handle, name);
             address = h;
             return h != IntPtr.Zero;
         }
-
+        /// <summary>
+        /// 基础名称
+        /// </summary>
+        /// <param name="basename"></param>
+        /// <param name="suffix"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         static string basename_to_libname(string basename, LibSuffix suffix)
         {
             switch (suffix)
@@ -161,12 +245,7 @@ namespace SQLitePCL.Raw.Core
             }
         }
 
-        static bool TryLoad(
-            string name,
-            Loader plat,
-            Action<string> log,
-            out IntPtr h
-            )
+        static bool TryLoad(string name, Loader plat, Action<string> log, out IntPtr h)
         {
             try
             {
@@ -305,13 +384,7 @@ namespace SQLitePCL.Raw.Core
             return $"{front}-{back}";
         }
 
-        static bool Search(
-            IList<string> a,
-            Loader plat,
-            Action<string> log,
-            out string name,
-            out IntPtr h
-            )
+        static bool Search(IList<string> a, Loader plat, Action<string> log, out string name, out IntPtr h)
         {
             foreach (var s in a)
             {
@@ -327,19 +400,12 @@ namespace SQLitePCL.Raw.Core
             return false;
         }
 
-        static List<string> MakePossibilitiesFor(
-            string basename,
-            System.Reflection.Assembly assy,
-            int flags,
-            LibSuffix suffix
-            )
+        static List<string> MakePossibilitiesFor(string basename, System.Reflection.Assembly assy, int flags, LibSuffix suffix)
         {
             var a = new List<string>();
-
 #if not
 			a.Add(basename);
 #endif
-
             var libname = basename_to_libname(basename, suffix);
             if ((flags & WHERE_PLAIN) != 0)
             {
@@ -379,12 +445,7 @@ namespace SQLitePCL.Raw.Core
 		}
 #endif
 
-        static IntPtr MyLoad(
-            string basename,
-            System.Reflection.Assembly assy,
-            int flags,
-            Action<string> log
-            )
+        static IntPtr MyLoad(string basename, System.Reflection.Assembly assy, int flags, Action<string> log)
         {
             // TODO make this code accept a string that already has the suffix?
             // TODO does S.R.I.NativeLibrary do that?
@@ -413,11 +474,11 @@ namespace SQLitePCL.Raw.Core
 #endif
 #if NET40 || NET45
         /// <summary>
-        /// 
+        /// 运行环境信息
         /// </summary>
         public static class RuntimeInformation
         {
-            private static string? s_osDescription;
+            private static string s_osDescription;
             private static volatile int s_osArch = -1;
             private static volatile int s_processArch = -1;
             /// <summary>

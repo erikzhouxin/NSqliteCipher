@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace SQLitePCL.Raw.Core
@@ -51,5 +52,52 @@ namespace SQLitePCL.Raw.Core
             return encoding.GetString(byteArray);
         }
 #endif
+        public static Utf8z ToUtf8z(this string s)
+        {
+            return Utf8z.FromString(s);
+        }
+
+        public static byte[] ToUtf8WithZ(this string sourceText)
+        {
+            if (sourceText == null) { return new byte[] { }; }
+            int nlen = Encoding.UTF8.GetByteCount(sourceText);
+            var byteArray = new byte[nlen + 1];
+            var wrote = Encoding.UTF8.GetBytes(sourceText, 0, sourceText.Length, byteArray, 0);
+            byteArray[wrote] = 0;
+            return byteArray;
+        }
+
+        static int MyStrLen(System.IntPtr nativeString)
+        {
+            var offset = 0;
+            if (nativeString != IntPtr.Zero)
+            {
+                // TODO would this be faster if it used unsafe code with a pointer?
+                while (Marshal.ReadByte(nativeString, offset) > 0)
+                {
+                    offset++;
+                }
+            }
+            return offset;
+        }
+        /// <summary>
+        /// 来自Utf8z
+        /// </summary>
+        /// <param name="nativeString"></param>
+        /// <returns></returns>
+        public static string FromUtf8z(IntPtr nativeString)
+        {
+            return FromUtf8(nativeString, MyStrLen(nativeString));
+        }
+        /// <summary>
+        /// 来自UTF8
+        /// </summary>
+        /// <param name="nativeString"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
+        public static unsafe string FromUtf8(IntPtr nativeString, int size)
+        {
+            return nativeString == IntPtr.Zero ? null : Encoding.UTF8.GetString((byte*)nativeString.ToPointer(), size);
+        }
     }
 }
