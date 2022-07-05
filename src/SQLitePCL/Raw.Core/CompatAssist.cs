@@ -14,8 +14,9 @@ namespace SQLitePCL.Raw.Core
 #if NET40
         public static byte[] Slice(this byte[] data, int start, int len)
         {
+            if (data == null || data.Length < (start + len)) { return new byte[0]; }
             var res = new byte[len];
-            for (int i = start; i < len; i++)
+            for (int i = start; i < start + len; i++)
             {
                 res[i - start] = data[i];
             }

@@ -273,11 +273,13 @@ namespace System.Data.SQLiteCipher
                     break;
             }
 
-            var dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
-            if (!string.IsNullOrEmpty(dataDirectory)
-                && (flags & SQLITE_OPEN_URI) == 0
-                && !filename.Equals(":memory:", StringComparison.OrdinalIgnoreCase))
+            if ((flags & SQLITE_OPEN_URI) == 0 && !filename.Equals(":memory:", StringComparison.OrdinalIgnoreCase))
             {
+                var dataDirectory = AppDomain.CurrentDomain.GetData("DataDirectory") as string;
+                if (string.IsNullOrEmpty(dataDirectory))
+                {
+                    dataDirectory = Directory.GetCurrentDirectory();
+                }
                 if (filename.StartsWith(DataDirectoryMacro, StringComparison.InvariantCultureIgnoreCase))
                 {
                     filename = Path.Combine(dataDirectory, filename.Substring(DataDirectoryMacro.Length));

@@ -236,14 +236,7 @@ namespace SQLitePCL.Raw.Core
                 var rc = NativeMethods.sqlite3_prepare_v2(db, p_sql, sql.Length, out stm, out var p_tail);
                 var len_consumed = (int)(p_tail - p_sql);
                 int len_remain = sql.Length - len_consumed;
-                if (len_remain > 0)
-                {
-                    tail = sql.Slice(len_consumed, len_remain);
-                }
-                else
-                {
-                    tail = new byte[] { };
-                }
+                tail = len_remain > 0 ? sql.Slice(len_consumed, len_remain) : (new byte[0]);
                 return rc;
             }
         }
@@ -267,14 +260,7 @@ namespace SQLitePCL.Raw.Core
                 var rc = NativeMethods.sqlite3_prepare_v3(db, p_sql, sql.Length, flags, out stm, out var p_tail);
                 var len_consumed = (int)(p_tail - p_sql);
                 int len_remain = sql.Length - len_consumed;
-                if (len_remain > 0)
-                {
-                    tail = sql.Slice(len_consumed, len_remain);
-                }
-                else
-                {
-                    tail = new byte[] { };
-                }
+                tail = len_remain > 0 ? sql.Slice(len_consumed, len_remain) : (new byte[] { });
                 return rc;
             }
         }
@@ -2160,14 +2146,7 @@ namespace SQLitePCL.Raw.Core
                 var rc = NativeMethods.sqlite3_prepare_v2(db, p_sql, sql.Length, out stm, out var p_tail);
                 var len_consumed = (int)(p_tail - p_sql);
                 int len_remain = sql.Length - len_consumed;
-                if (len_remain > 0)
-                {
-                    tail = sql.Slice(len_consumed, len_remain);
-                }
-                else
-                {
-                    tail = ReadOnlySpan<byte>.Empty;
-                }
+                tail = len_remain > 0 ? sql.Slice(len_consumed, len_remain) : ReadOnlySpan<byte>.Empty;
                 return rc;
             }
         }
@@ -2191,14 +2170,7 @@ namespace SQLitePCL.Raw.Core
                 var rc = NativeMethods.sqlite3_prepare_v3(db, p_sql, sql.Length, flags, out stm, out var p_tail);
                 var len_consumed = (int)(p_tail - p_sql);
                 int len_remain = sql.Length - len_consumed;
-                if (len_remain > 0)
-                {
-                    tail = sql.Slice(len_consumed, len_remain);
-                }
-                else
-                {
-                    tail = ReadOnlySpan<byte>.Empty;
-                }
+                tail = len_remain > 0 ? sql.Slice(len_consumed, len_remain) : ReadOnlySpan<byte>.Empty;
                 return rc;
             }
         }

@@ -1952,30 +1952,14 @@ namespace SQLitePCL.Raw.Core
             var ba = sql.ToUtf8WithZ();
 #if NET40
             int rc = sqlite3_prepare_v2(db, ba, out stmt, out var sp_tail);
-            tail = utf8_span_to_string(GetSlice(sp_tail));
 #else
             int rc = sqlite3_prepare_v2(db, new ReadOnlySpan<byte>(ba), out stmt, out var sp_tail);
-            tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
 #endif
+            tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
             return rc;
         }
 
 #if NET40
-        /// <summary>
-        /// Ωÿ»°
-        /// </summary>
-        /// <param name="sp_tail"></param>
-        /// <param name="dist"></param>
-        /// <returns></returns>
-        private static byte[] GetSlice(byte[] sp_tail, int dist = 1)
-        {
-            var ta = new byte[sp_tail.Length - dist];
-            for (int i = 0; i < ta.Length; i++)
-            {
-                ta[i] = sp_tail[i];
-            }
-            return ta;
-        }
         /// <summary>
         /// ‘§±‡“Î
         /// </summary>
@@ -2100,11 +2084,10 @@ namespace SQLitePCL.Raw.Core
             var ba = sql.ToUtf8WithZ();
 #if NET40
             int rc = sqlite3_prepare_v3(db, ba, flags, out stmt, out var sp_tail);
-            tail = utf8_span_to_string(GetSlice(sp_tail));
 #else
             int rc = sqlite3_prepare_v3(db, new ReadOnlySpan<byte>(ba), flags, out stmt, out var sp_tail);
-            tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
 #endif
+            tail = utf8_span_to_string(sp_tail.Slice(0, sp_tail.Length - 1));
             return rc;
         }
         /// <summary>
