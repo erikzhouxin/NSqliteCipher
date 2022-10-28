@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFrameworks>net5.0-windows;netcoreapp3.1</TargetFrameworks>
+		<TargetFrameworks>netcoreapp3.1</TargetFrameworks>
 		<AssemblyName>TestWPFUI.SQLiteCipher</AssemblyName>
 		<RootNamespace>TestWPFUI.SQLiteCipher</RootNamespace>
 		<AssemblyTitle>TestWPFUI.SQLiteCipher</AssemblyTitle>
@@ -10,7 +10,7 @@
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<UseWPF>true</UseWPF>
 		<UseWindowsForms>true</UseWindowsForms>
-		<PackageTags>TestWPF.SQLiteCipher</PackageTags>
+		<PackageTags>TestWPFUI.SQLiteCipher</PackageTags>
 		<Authors>ErikZhouXin</Authors>
 		<Copyright>Copyright © 2019 版权所有</Copyright>
 		<PackageReleaseNotes>Copyright © 2019 版权所有</PackageReleaseNotes>
@@ -19,33 +19,21 @@
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net45'">
 		<DefineConstants>TRACE;DEBUG;NETFrame;NET45</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNet45.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|netcoreapp3.1'">
 		<DefineConstants>TRACE;DEBUG;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNetCore.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Debug|net5.0-windows'">
 		<DefineConstants>TRACE;DEBUG;NET50;WINDOWS</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipher.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net45'">
 		<DefineConstants>TRACE;NETFrame;NET45</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNet45.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|netcoreapp3.1'">
 		<DefineConstants>TRACE;NETFx;NETCore</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipherNetCore.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)'=='Release|net5.0-windows'">
 		<DefineConstants>TRACE;NET50;WINDOWS</DefineConstants>
-		<DocumentationFile>bin\TestWPFUI.SQLiteCipher.xml</DocumentationFile>
-		<OutputPath>bin</OutputPath>
 	</PropertyGroup>
 	<ItemGroup Condition="'$(TargetFramework)' == 'net45'">
 		<PackageReference Include="WpfAnimatedGif" Version="2.0.0" />
