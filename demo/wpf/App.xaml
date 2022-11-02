@@ -5,7 +5,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="pack://application:,,,/TestWPFUI.SQLiteCipher;component/UStyles/MaterialDesignTheme.xaml"/>
+                <ResourceDictionary Source="UStyles/MaterialDesignTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
