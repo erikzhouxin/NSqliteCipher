@@ -1,8 +1,6 @@
-﻿using MaterialDesignColors;
-using MaterialDesignColors.ColorManipulation;
-using MaterialDesignThemes.Wpf;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Data.MaterialDesignToolkit.Wpf;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;

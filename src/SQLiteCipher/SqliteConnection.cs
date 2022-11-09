@@ -388,10 +388,11 @@ namespace System.Data.SQLiteCipher
             {
                 _db?.Dispose();
                 _db = null;
-
                 _state = ConnectionState.Closed;
 
+#pragma warning disable CA2200 // 再次引发以保留堆栈详细信息
                 throw ex;
+#pragma warning restore CA2200 // 再次引发以保留堆栈详细信息
             }
             OnStateChange(new StateChangeEventArgs(ConnectionState.Closed, ConnectionState.Open));
         }
