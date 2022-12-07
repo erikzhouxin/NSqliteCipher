@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0;net5.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
+		<TargetFrameworks>net6.0;netcoreapp3.1;netstandard2.1;net45;net40;</TargetFrameworks>
 		<Description>SQLite数据库.Useful SQLite Database Process Utilities Based On Microsoft.Data.Sqlite.</Description>
 		<AssemblyName>NSystem.Data.SQLiteCipher</AssemblyName>
 		<RootNamespace>System.Data.SQLiteCipher</RootNamespace>
@@ -16,9 +16,9 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2022.6.6</Version>
-		<FileVersion>2022.6.6.666</FileVersion>
-		<AssemblyVersion>2022.6.6.666</AssemblyVersion>
+		<Version>2022.8.8</Version>
+		<FileVersion>2022.8.8.688</FileVersion>
+		<AssemblyVersion>2022.8.8.688</AssemblyVersion>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<AppConfig Condition="'$(TargetFramework)' == 'net40'">app.net40.config</AppConfig>
