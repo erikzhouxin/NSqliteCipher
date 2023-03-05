@@ -1,7 +1,6 @@
 using System;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-
-using System;
 
 namespace System.Data.SQLiteEFCore
 {

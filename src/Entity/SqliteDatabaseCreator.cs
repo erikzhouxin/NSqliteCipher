@@ -1,6 +1,7 @@
 using System;
 using System.Data.SQLiteCipher;
 using System.IO;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 

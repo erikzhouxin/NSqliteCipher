@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using System;
 
-using System;
-
 namespace System.Data.SQLiteEFCore
 {
     /// <summary>
