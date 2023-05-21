@@ -16,9 +16,9 @@
 		<TargetLatestRuntimePatch>true</TargetLatestRuntimePatch>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
-		<Version>2022.8.8</Version>
-		<FileVersion>2022.8.8.688</FileVersion>
-		<AssemblyVersion>2022.8.8.688</AssemblyVersion>
+		<Version>2022.12.12</Version>
+		<FileVersion>2022.12.12.722</FileVersion>
+		<AssemblyVersion>2022.12.12.722</AssemblyVersion>
 		<RepositoryUrl>https://gitee.com/erikzhouxin/nsqlitecipher</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<AppConfig Condition="'$(TargetFramework)' == 'net40'">app.net40.config</AppConfig>
