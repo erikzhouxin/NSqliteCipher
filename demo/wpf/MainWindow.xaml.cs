@@ -206,7 +206,7 @@ namespace TestWPFUI.SQLiteCipher
         {
             MainWindow.Instance.ContentLoading.HideMask();
         }
-        private LazyBone<MenuViewModel> _contextModel = new LazyBone<MenuViewModel> (()=>
+        private LazyBone<MenuViewModel> _contextModel = new LazyBone<MenuViewModel>(() =>
         {
             return new MenuViewModel("内置数据库", MainViewModel.DefaultFile, () => new EFCoreContent(MainViewModel.DefaultConfig))
             {
@@ -220,7 +220,7 @@ namespace TestWPFUI.SQLiteCipher
             var key = (DateTime.Now.Ticks / distTicks).ToString();
             if (!cache.Get<bool>(key))
             {
-                cache.Set(key, true, new DateTimeOffset(DateTime.Now.AddTicks(distTicks)));
+                cache.Set(key, true, DateTimeOffset.Now.AddTicks(distTicks));
                 _contextModel.Reload();
             }
             ViewModel.Selected = _contextModel.Value;
